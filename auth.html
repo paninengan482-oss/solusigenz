@@ -1,8 +1,147 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Akun — Solusi Genz</title><link rel="stylesheet" href="revamp.css"></head><body><main class="auth-wrap"><section class="card auth-card"><a href="index.html"><img class="auth-logo" src="assets/solusi-genz-logo.jpg" alt="Solusi Genz"></a><span class="badge">AKUN PELANGGAN</span><h1 id="title">Selamat datang kembali.</h1><p class="muted" id="subtitle">Masuk untuk membuka dashboard pelanggan.</p><div id="nameField" class="field" style="display:none"><label>Nama lengkap</label><input id="name"></div><div class="field" style="margin-top:14px"><label>Email</label><input id="email" type="email"></div><div class="field" style="margin-top:14px"><label>Password</label><input id="password" type="password"></div><button id="submit" class="btn btn-primary" style="width:100%;margin-top:18px">Masuk</button><div id="msg" class="notice" style="display:none;margin-top:14px"></div><p class="muted" id="switch">Belum punya akun? <a href="auth.html?mode=register"><b>Daftar gratis</b></a></p></section></main><script src="supabase-config.js"></script><script>
-const $=x=>document.getElementById(x),q=new URLSearchParams(location.search),reg=q.get("mode")==="register",ref=q.get("ref")||localStorage.getItem("sg_ref_code")||"";
-if(ref)localStorage.setItem("sg_ref_code",ref);
-if(reg){title.textContent="Buat akun Solusi Genz.";subtitle.textContent="Daftar sekali, lalu akses produk, pesanan, reward, dan affiliate.";nameField.style.display="flex";submit.textContent="Buat Akun";switch.innerHTML='Sudah punya akun? <a href="auth.html'+(ref?'?ref='+encodeURIComponent(ref):'')+'"><b>Masuk</b></a>'}
-async function req(path,body){return fetch(window.SG_SUPABASE_URL+path,{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},body:JSON.stringify(body)})}
-function show(s){msg.textContent=s;msg.style.display="block"}
-submit.onclick=async()=>{const em=email.value.trim(),pw=password.value,n=name.value.trim();if(!em||pw.length<6||(reg&&!n)){show("Lengkapi data. Password minimal 6 karakter.");return}submit.disabled=true;submit.textContent="Memproses...";try{const body=reg?{email:em,password:pw,data:{full_name:n,referral_code:ref||null}}:{email:em,password:pw};const r=await req(reg?"/auth/v1/signup":"/auth/v1/token?grant_type=password",body);const t=await r.text();if(!r.ok)throw Error(t);const d=JSON.parse(t);if(d.access_token){localStorage.setItem("sg_user_token",d.access_token);localStorage.setItem("sg_user_email",em);localStorage.setItem("sg_user_name",reg?n:(d.user?.user_metadata?.full_name||em.split("@")[0]));localStorage.setItem("sg_user_id",d.user?.id||"");location.replace("shop.html")}else show("Akun dibuat. Jika konfirmasi email aktif, cek email lalu masuk.")}catch(e){show(reg?"Pendaftaran belum berhasil. Email mungkin sudah terdaftar.":"Email atau password salah.")}finally{submit.disabled=false;submit.textContent=reg?"Buat Akun":"Masuk"}};
-</script></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Akun — Solusi Genz</title>
+  <link rel="stylesheet" href="revamp.css">
+</head>
+<body>
+<main class="auth-wrap">
+  <section class="card auth-card">
+    <a href="index.html"><img class="auth-logo" src="assets/solusi-genz-logo.jpg" alt="Solusi Genz"></a>
+    <span class="badge">AKUN PELANGGAN</span>
+    <h1 id="title">Selamat datang kembali.</h1>
+    <p class="muted" id="subtitle">Masuk untuk membuka dashboard pelanggan.</p>
+    <div id="nameField" class="field" style="display:none">
+      <label>Nama lengkap</label><input id="name">
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>Email</label><input id="email" type="email">
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>Password</label><input id="password" type="password">
+    </div>
+    <button id="submit" class="btn btn-primary" style="width:100%;margin-top:18px">Masuk</button>
+    <div id="msg" class="notice" style="display:none;margin-top:14px"></div>
+    <p class="muted" id="switch"></p>
+  </section>
+</main>
+
+<script src="supabase-config.js"></script>
+<script>
+const $ = x => document.getElementById(x);
+const q = new URLSearchParams(location.search);
+const reg = q.get("mode") === "register";
+const urlRef = (q.get("ref") || "").trim();
+const savedRef = (localStorage.getItem("sg_ref_code") || "").trim();
+const ref = urlRef || savedRef;
+
+if (urlRef) localStorage.setItem("sg_ref_code", urlRef);
+
+function authUrl(mode) {
+  const p = new URLSearchParams();
+  if (mode) p.set("mode", mode);
+  if (ref) p.set("ref", ref);
+  const s = p.toString();
+  return "auth.html" + (s ? "?" + s : "");
+}
+
+if (reg) {
+  title.textContent = "Buat akun Solusi Genz.";
+  subtitle.textContent = "Daftar sekali, lalu akses produk, pesanan, reward, dan affiliate.";
+  nameField.style.display = "flex";
+  submit.textContent = "Buat Akun";
+  switch.innerHTML = 'Sudah punya akun? <a href="' + authUrl("") + '"><b>Masuk</b></a>';
+} else {
+  switch.innerHTML = 'Belum punya akun? <a href="' + authUrl("register") + '"><b>Daftar gratis</b></a>';
+}
+
+async function req(path, body, token) {
+  const headers = {
+    "Content-Type": "application/json",
+    "apikey": window.SG_SUPABASE_KEY
+  };
+  if (token) headers.Authorization = "Bearer " + token;
+  return fetch(window.SG_SUPABASE_URL + path, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body)
+  });
+}
+
+async function attachReferral(token, user, email) {
+  const code = (localStorage.getItem("sg_ref_code") || ref || "").trim();
+  if (!token || !code || !email) return;
+  try {
+    const r = await req(
+      "/rest/v1/rpc/sg_affiliate_attach_referral",
+      {
+        p_buyer_email: email,
+        p_buyer_user_id: user?.id || null,
+        p_referral_code: code
+      },
+      token
+    );
+    if (r.ok) localStorage.removeItem("sg_ref_code");
+  } catch (e) {
+    console.log("Referral belum terhubung:", e);
+  }
+}
+
+function show(s) {
+  msg.textContent = s;
+  msg.style.display = "block";
+}
+
+submit.onclick = async () => {
+  const em = email.value.trim();
+  const pw = password.value;
+  const n = name.value.trim();
+
+  if (!em || pw.length < 6 || (reg && !n)) {
+    show("Lengkapi data. Password minimal 6 karakter.");
+    return;
+  }
+
+  submit.disabled = true;
+  submit.textContent = "Memproses...";
+
+  try {
+    const body = reg
+      ? {email: em, password: pw, data: {full_name: n, referral_code: ref || null}}
+      : {email: em, password: pw};
+
+    const r = await req(
+      reg ? "/auth/v1/signup" : "/auth/v1/token?grant_type=password",
+      body
+    );
+    const t = await r.text();
+    if (!r.ok) throw Error(t);
+
+    const d = JSON.parse(t);
+
+    if (d.access_token) {
+      localStorage.setItem("sg_user_token", d.access_token);
+      localStorage.setItem("sg_user_email", em);
+      localStorage.setItem(
+        "sg_user_name",
+        reg ? n : (d.user?.user_metadata?.full_name || em.split("@")[0])
+      );
+      localStorage.setItem("sg_user_id", d.user?.id || "");
+
+      await attachReferral(d.access_token, d.user, em);
+      location.replace("shop.html");
+    } else {
+      show("Akun berhasil dibuat. Jika konfirmasi email aktif, cek email lalu masuk kembali.");
+    }
+  } catch (e) {
+    show(reg ? "Pendaftaran belum berhasil. Email mungkin sudah terdaftar." : "Email atau password salah.");
+  } finally {
+    submit.disabled = false;
+    submit.textContent = reg ? "Buat Akun" : "Masuk";
+  }
+};
+</script>
+</body>
+</html>
