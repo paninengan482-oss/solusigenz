@@ -10,3 +10,4 @@ Urutan instalasi:
 7. Tes: checkout > Saya Sudah Bayar > admin login > Lunas > Proses > Selesai > cek status pelanggan.
 
 Jangan masukkan Secret/Service Role Key ke frontend.
+Deploy triger
