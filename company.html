@@ -1,0 +1,25 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="styles.css"><style>.simple-page{max-width:900px;margin:0 auto;padding:28px 18px 90px}.simple-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.simple-card{background:#fff;border:1px solid #e8eaf0;border-radius:20px;padding:22px;box-shadow:0 12px 30px rgba(16,24,40,.05);margin-bottom:14px}.simple-card h1,.simple-card h2{margin-top:0}.simple-card p{color:#667085;line-height:1.7}.simple-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.simple-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}.simple-field label{font-size:12px;font-weight:700}.simple-field input,.simple-field textarea{padding:11px 12px;border:1px solid #dfe3ea;border-radius:10px}.simple-btn{border:0;background:#6d3df5;color:#fff;border-radius:10px;padding:10px 13px;font-weight:800}.simple-link{color:#6d3df5;font-weight:700}@media(max-width:700px){.simple-grid{grid-template-columns:1fr}.simple-page{padding-top:16px}.simple-card{padding:16px;border-radius:15px}}</style><title>Profil Solusi Genz</title></head><body class="v13-body"><main class="simple-page"><div class="simple-top"><a class="simple-link" href="shop.html">← Dashboard</a><b>SOLUSI GENZ</b></div><section class="simple-card"><h1>Profil Solusi Genz</h1><div class="simple-grid"><div><p id="companyProfile">Solusi Genz hadir sebagai platform layanan digital untuk membantu pelanggan mendapatkan kebutuhan digital dengan lebih mudah.</p><h2>Visi</h2><p>Menjadi platform solusi digital yang dekat dengan generasi sekarang, mudah digunakan, dan terus berkembang.</p><h2>Misi</h2><p>Menyederhanakan proses pembelian layanan digital, memberikan informasi yang jelas, serta menghadirkan pengalaman pelanggan yang modern.</p></div><div><img src="owner.jpg" style="width:100%;border-radius:18px;display:block"><h2 style="margin-top:14px">Founder</h2><p>Dede Fahruroji — membangun Solusi Genz sebagai layanan digital yang praktis dan mudah diakses.</p></div></div></section><section class="simple-card"><h2>Program Reward</h2><p>Setiap pembelian dapat menghasilkan poin reward. Jumlah poin dan hadiah dapat berubah sesuai program yang ditetapkan owner Solusi Genz.</p><a class="simple-link" href="rewards.html">Lihat Reward →</a></section>
+<section class="simple-card">
+  <h2 id="companyAboutTitle">Tentang Kami</h2>
+  <p id="companyAboutText">Solusi Genz hadir untuk membantu generasi digital mendapatkan layanan yang praktis, mudah dipahami, dan nyaman digunakan.</p>
+</section>
+</main><script src="supabase-config.js"></script><script src="assets/store-settings.js"></script><script>document.addEventListener('sg-settings-ready',e=>companyProfile.textContent=e.detail.company_profile);sgLoadSettings()</script>
+<script>
+function applyCompanySettings132(s){
+  const p=document.getElementById('companyProfile');
+  const t=document.getElementById('companyAboutTitle');
+  const x=document.getElementById('companyAboutText');
+  if(p) p.textContent=s.company_profile || '';
+  if(t) t.textContent=s.about_title || 'Tentang Kami';
+  if(x) x.textContent=s.about_text || '';
+}
+document.addEventListener('sg-settings-ready',e=>applyCompanySettings132(e.detail));
+sgLoadSettings();
+</script>
+<script>
+function applyCompanyFinal133(s){
+ const p=document.getElementById('companyProfile'),t=document.getElementById('companyAboutTitle'),x=document.getElementById('companyAboutText');
+ if(p)p.textContent=s.company_profile||'';if(t)t.textContent=s.about_title||'Tentang Kami';if(x)x.textContent=s.about_text||'';
+}
+document.addEventListener('sg-settings-ready',e=>applyCompanyFinal133(e.detail));sgLoadSettings();
+</script></body></html>

@@ -1,0 +1,13 @@
+{
+  "cleanUrls": false,
+  "headers": [
+    {
+      "source": "/(.*)\\.html",
+      "headers": [{"key":"Cache-Control","value":"no-store, max-age=0"}]
+    },
+    {
+      "source": "/supabase-config.js",
+      "headers": [{"key":"Cache-Control","value":"no-store, max-age=0"}]
+    }
+  ]
+}

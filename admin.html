@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — Solusi Genz</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--border:#e5e7eb;--text:#111827;--muted:#667085;--blue:#4f46e5;--green:#16a34a;--orange:#d97706}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
+.admin-wrap{display:grid;grid-template-columns:220px 1fr;min-height:100vh}.side{background:#0d2546;color:#fff;padding:22px 15px;display:flex;flex-direction:column}.side .brand{display:flex;gap:10px;align-items:center;margin-bottom:22px}.side .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#8b5cf6);display:grid;place-items:center;font-weight:900;overflow:hidden}.side .logo img{width:100%;height:100%;object-fit:contain;background:#fff;padding:3px}.side strong{font-size:13px}.side small{font-size:8px;color:#b8c5d8}.nav{display:flex;flex-direction:column;gap:6px}.nav a{color:#d9e2ef;text-decoration:none;padding:10px 11px;border-radius:10px;font-size:11px}.nav a:hover,.nav a.active{background:#203c66;color:#fff}.side-bottom{margin-top:auto}.main{padding:24px;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.top h1{font-size:23px;margin:0}.top p{font-size:10px;color:var(--muted);margin:3px 0 0}.btn{border:0;border-radius:10px;padding:10px 13px;font-weight:800;cursor:pointer}.btn-primary{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff}.btn-ghost{background:#fff;border:1px solid var(--border);color:#475467}.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(16,24,40,.04)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat small{font-size:9px;color:var(--muted)}.stat h3{font-size:22px;margin:6px 0 2px}.panel{margin-top:14px}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}.panel h3{font-size:14px;margin:0}.panel .sub{font-size:10px;color:var(--muted);margin-top:3px}.toolbar select{padding:8px 9px;border:1px solid var(--border);border-radius:9px}.scroll{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:9px;margin-top:10px}.table th,.table td{padding:9px;border-bottom:1px solid #eef0f4;text-align:left;white-space:nowrap}.table th{color:#667085}.pill{display:inline-block;padding:4px 6px;border-radius:8px;background:#f3f4f6}.actions{display:flex;gap:4px}.actions button{border:1px solid #e5e7eb;background:#fff;border-radius:7px;padding:5px 7px;font-size:7px;cursor:pointer}.note{padding:10px;border-radius:10px;background:#fff7ed;color:#9a3412;font-size:10px;margin-top:10px}
+.login-card{max-width:430px;margin:80px auto}.login-card input{width:100%;padding:11px;border:1px solid var(--border);border-radius:10px;margin:6px 0 12px}.hidden{display:none!important}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.settings-grid label{display:flex;flex-direction:column;gap:6px;font-size:10px;font-weight:800}.settings-grid input,.settings-grid textarea{padding:10px;border:1px solid var(--border);border-radius:9px;font:inherit}.settings-grid .wide{grid-column:1/-1}.logo-box{display:grid;grid-template-columns:105px 1fr;gap:14px;align-items:center;padding:13px;border:1px solid var(--border);border-radius:13px;background:#fafbff;margin-top:14px}.logo-preview{width:96px;height:96px;border-radius:20px;background:linear-gradient(135deg,#4f46e5,#a855f7);color:#fff;display:grid;place-items:center;font-size:42px;font-weight:900;overflow:hidden}.logo-preview img{width:100%;height:100%;object-fit:contain;background:#fff;padding:7px}.logo-box p{font-size:9px;color:var(--muted);margin:4px 0 8px}
+.ok{color:#15803d}.err{color:#b91c1c}
+@media(max-width:760px){.admin-wrap{display:block}.side{position:static;min-height:auto}.nav{display:grid;grid-template-columns:1fr 1fr}.side-bottom{margin-top:12px}.main{padding:12px}.stats{grid-template-columns:1fr 1fr}.settings-grid{grid-template-columns:1fr}.settings-grid .wide{grid-column:auto}.logo-box{grid-template-columns:78px 1fr}.logo-preview{width:72px;height:72px}.row{align-items:flex-start;flex-direction:column}}
+</style>
+
+<style>
+/* ===== V13.4 ADMIN VISUAL POLISH ===== */
+body{background:linear-gradient(180deg,#f6f8fc 0%,#f4f6fa 100%)}
+.admin-wrap{grid-template-columns:250px 1fr}
+.side{padding:26px 18px;background:linear-gradient(180deg,#0b2343 0%,#11335f 100%);box-shadow:8px 0 30px rgba(13,37,70,.08)}
+.side .brand{margin-bottom:26px}
+.side .logo{width:46px;height:46px;border-radius:14px}
+.side strong{font-size:15px;letter-spacing:.01em}.side small{font-size:9px}
+.nav{gap:8px}.nav a{padding:13px 14px;border-radius:12px;font-size:12px;font-weight:700}.nav a.active{background:linear-gradient(90deg,#ffffff1f,#ffffff12);box-shadow:inset 0 0 0 1px #ffffff18}
+.main{padding:30px 34px 36px}
+.top{margin-bottom:22px}.top h1{font-size:30px;letter-spacing:-.03em}.top p{font-size:12px;margin-top:5px}
+.btn{padding:11px 15px;border-radius:11px;font-size:11px}
+.card{border-radius:20px;padding:20px;border:1px solid #e6e9f0;box-shadow:0 12px 30px rgba(16,24,40,.055)}
+.stats{gap:16px}.stat{min-height:118px;display:flex;flex-direction:column;justify-content:center}.stat small{font-size:11px}.stat h3{font-size:28px;margin:8px 0 3px}
+.panel{margin-top:18px}.panel h3{font-size:17px}.panel .sub{font-size:11px;margin-top:5px}
+.toolbar select{padding:10px 12px;border-radius:10px;font-size:11px}
+.table{font-size:11px;margin-top:14px}.table th,.table td{padding:13px 12px}.table th{font-size:10px;text-transform:uppercase;letter-spacing:.04em}.pill{padding:5px 8px;border-radius:9px;font-size:9px;font-weight:700}
+.actions{gap:6px}.actions button{padding:6px 9px;font-size:8px;border-radius:8px}
+.note{padding:12px;border-radius:11px;font-size:11px}
+.settings-grid{gap:16px;margin-top:18px}.settings-grid label{font-size:11px}.settings-grid input,.settings-grid textarea{padding:12px 13px;border-radius:11px;background:#fff;font-size:12px}
+.logo-box{grid-template-columns:120px 1fr;gap:18px;padding:16px;border-radius:16px;margin-top:18px;background:linear-gradient(135deg,#fafbff,#f7f4ff)}
+.logo-preview{width:110px;height:110px;border-radius:24px}.logo-box b{font-size:13px!important}.logo-box p{font-size:10px;line-height:1.6}
+#settingsMsg{font-size:11px!important}
+#saveSettingsBtn{min-width:165px}
+@media(max-width:1180px){.admin-wrap{grid-template-columns:220px 1fr}.main{padding:24px}.table{font-size:10px}}
+@media(max-width:760px){
+ .admin-wrap{display:block}.side{padding:16px}.main{padding:14px}.top h1{font-size:23px}.top p{font-size:10px}
+ .stats{grid-template-columns:1fr 1fr;gap:10px}.stat{min-height:95px}.stat h3{font-size:22px}
+ .card{padding:15px;border-radius:16px}.table{font-size:9px}.table th,.table td{padding:9px 8px}
+ .settings-grid input,.settings-grid textarea{font-size:11px}.logo-box{grid-template-columns:90px 1fr}.logo-preview{width:82px;height:82px}
+}
+</style>
+
+
+<style>
+/* ===== V13.5 MOBILE ADMIN REBUILD ===== */
+@media(max-width:760px){
+  body{background:#f5f7fb}
+  .admin-wrap{display:block!important;min-height:100vh}
+  .side{
+    position:relative!important;
+    width:100%!important;height:auto!important;min-height:0!important;
+    padding:14px 14px 12px!important;
+    background:linear-gradient(135deg,#102b52,#163f73)!important;
+    box-shadow:none!important;border-radius:0 0 22px 22px;
+  }
+  .side .brand{margin:0 0 12px!important}
+  .side .logo{width:42px!important;height:42px!important;border-radius:13px!important}
+  .side strong{font-size:14px!important}
+  .side small{font-size:8px!important}
+  .nav{
+    display:grid!important;
+    grid-template-columns:repeat(4,1fr)!important;
+    gap:7px!important;
+    padding:0!important;
+  }
+  .nav a{
+    min-height:58px!important;
+    padding:8px 5px!important;
+    display:flex!important;flex-direction:column!important;
+    justify-content:center!important;align-items:center!important;
+    gap:3px!important;
+    text-align:center!important;
+    color:#dce8f7!important;
+    background:rgba(255,255,255,.08)!important;
+    border:1px solid rgba(255,255,255,.09)!important;
+    border-radius:12px!important;
+    font-size:9px!important;font-weight:800!important;
+    line-height:1.2!important;
+  }
+  .nav a.active{background:#fff!important;color:#15365f!important}
+  .side-bottom{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    gap:8px!important;margin-top:10px!important;
+    padding-top:10px!important;border-top:1px solid rgba(255,255,255,.12)
+  }
+  .side-bottom small{
+    color:#d8e3f2!important;font-size:8px!important;
+    max-width:58%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+  }
+  .side-bottom .btn{width:auto!important;margin:0!important;padding:8px 13px!important;font-size:9px!important}
+  .main{padding:16px 12px 90px!important}
+  .top{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;margin-bottom:14px!important}
+  .top h1{font-size:24px!important;margin:0!important}
+  .top p{font-size:9px!important;line-height:1.4!important;max-width:250px}
+  .top .btn{padding:9px 12px!important;font-size:9px!important}
+  .stats{
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+  }
+  .stat{
+    min-height:110px!important;
+    padding:16px!important;
+    border-radius:17px!important;
+  }
+  .stat small{font-size:10px!important;line-height:1.3}
+  .stat h3{font-size:25px!important;margin:8px 0 3px!important}
+  .panel{
+    margin-top:12px!important;
+    padding:15px!important;
+    border-radius:17px!important;
+  }
+  .panel h3{font-size:20px!important}
+  .panel .sub{font-size:10px!important;line-height:1.45!important}
+  .row{display:block!important}
+  .toolbar{margin-top:10px}
+  .toolbar select{width:100%!important;font-size:11px!important;padding:10px!important}
+  .scroll{
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    margin:0 -2px!important;
+  }
+  .table{
+    min-width:760px!important;
+    font-size:10px!important;
+  }
+  .table th,.table td{padding:11px 10px!important}
+  .actions button{font-size:8px!important;padding:6px 8px!important}
+  .logo-box{
+    grid-template-columns:84px 1fr!important;
+    gap:12px!important;padding:12px!important;
+    border-radius:14px!important;
+  }
+  .logo-preview{width:76px!important;height:76px!important;border-radius:18px!important}
+  .logo-box b{font-size:12px!important}
+  .logo-box p{font-size:9px!important;line-height:1.45!important}
+  .settings-grid{grid-template-columns:1fr!important;gap:12px!important}
+  .settings-grid label{font-size:10px!important}
+  .settings-grid input,.settings-grid textarea{
+    font-size:12px!important;padding:11px!important;border-radius:10px!important;
+  }
+  #saveSettingsBtn{width:100%!important;min-height:44px!important;font-size:11px!important}
+  #settingsMsg{display:block!important;margin-top:8px!important;font-size:9px!important}
+}
+
+@media(max-width:430px){
+  .nav{grid-template-columns:repeat(2,1fr)!important}
+  .nav a{min-height:48px!important;flex-direction:row!important;font-size:10px!important}
+  .top h1{font-size:22px!important}
+  .stats{gap:8px!important}
+  .stat{padding:14px!important;min-height:102px!important}
+  .stat h3{font-size:22px!important}
+}
+</style>
+
+</head>
+<body>
+
+<div id="loginView" class="login-card card">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div class="logo" data-sg-logo style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#8b5cf6);display:grid;place-items:center;color:#fff;font-weight:900;overflow:hidden">S</div>
+    <div><b>SOLUSI GENZ</b><div style="font-size:9px;color:#667085">Admin Login</div></div>
+  </div>
+  <h2 style="margin-bottom:4px">Login Admin</h2>
+  <p style="font-size:10px;color:#667085">Masuk menggunakan akun admin Supabase.</p>
+  <label style="font-size:10px;font-weight:700">Email</label>
+  <input id="email" type="email" placeholder="admin@email.com">
+  <label style="font-size:10px;font-weight:700">Password</label>
+  <input id="password" type="password" placeholder="Password admin">
+  <button id="loginBtn" class="btn btn-primary" style="width:100%">Masuk Dashboard</button>
+  <div id="loginMsg" class="note hidden"></div>
+  <a href="index.html" style="display:inline-block;margin-top:14px;font-size:10px;color:#4f46e5;text-decoration:none">← Kembali ke toko</a>
+</div>
+
+<div id="adminView" class="admin-wrap hidden">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo" data-sg-logo>S</div>
+      <div><strong>SOLUSI GENZ</strong><small>OWNER / ADMIN</small></div>
+    </div>
+    <nav class="nav">
+      <a href="#dashboard" class="active">⌂ Dashboard</a>
+      <a href="shop.html">▣ Lihat Toko</a>
+      <a href="#orders">▤ Pesanan</a>
+      <a href="#settings">⚙ Pengaturan Toko</a>
+    </nav>
+    <div class="side-bottom">
+      <small id="adminEmail"></small>
+      <button id="logoutBtn" class="btn btn-ghost" style="width:100%;margin-top:8px">Keluar</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div><h1>Dashboard Admin</h1><p>Kelola pesanan, tampilan toko, logo, reward, dan Tentang Kami.</p></div>
+      <button id="refreshBtn" class="btn btn-ghost">Refresh</button>
+    </header>
+
+    <section id="dashboard" class="stats">
+      <div class="card stat"><small>Total Pesanan</small><h3 id="statOrders">0</h3><span style="font-size:8px;color:#667085">Database nyata</span></div>
+      <div class="card stat"><small>Menunggu Verifikasi</small><h3 id="statVerify">0</h3><span style="font-size:8px;color:var(--orange)">Perlu dicek</span></div>
+      <div class="card stat"><small>Sedang Diproses</small><h3 id="statProcess">0</h3><span style="font-size:8px;color:#4f46e5">Aktif</span></div>
+      <div class="card stat"><small>Omzet Lunas/Selesai</small><h3 id="statRevenue">Rp 0</h3><span style="font-size:8px;color:var(--green)">Tercatat</span></div>
+    </section>
+
+    <section id="orders" class="card panel">
+      <div class="row">
+        <div><h3>Pesanan</h3><div class="sub">Ubah status setelah mengecek pembayaran.</div></div>
+        <div class="toolbar"><select id="filterStatus"><option value="">Semua status</option><option>pending</option><option>Menunggu Verifikasi</option><option>Lunas</option><option>Diproses</option><option>Selesai</option><option>Dibatalkan</option></select></div>
+      </div>
+      <div id="ordersMsg" class="note hidden"></div>
+      <div class="scroll"><table class="table"><thead><tr><th>Invoice</th><th>Pelanggan</th><th>Produk</th><th>Total</th><th>Pembayaran</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="ordersBody"></tbody></table></div>
+    </section>
+
+    <section id="settings" class="card panel">
+      <div><h3>Pengaturan Toko, Logo & Tentang Kami</h3><div class="sub">Semua perubahan di sini akan dibaca halaman konsumen setelah disimpan dan di-refresh.</div></div>
+
+      <div class="logo-box">
+        <div id="logoPreview" class="logo-preview">S</div>
+        <div>
+          <b style="font-size:11px">Logo Solusi Genz</b>
+          <p>Upload PNG/JPG/WebP. Logo akan diperkecil otomatis supaya ringan.</p>
+          <input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp">
+          <div><button id="removeLogo" type="button" class="btn btn-ghost" style="margin-top:8px">Hapus Logo</button></div>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <label>Judul Hero<input id="heroTitle"></label>
+        <label>Subjudul Hero<input id="heroSubtitle"></label>
+        <label>Judul Promo<input id="promoTitle"></label>
+        <label>Diskon (%)<input id="promoDiscount" type="number" min="0" max="100"></label>
+        <label>Poin per Pembelian<input id="rewardPerPurchase" type="number" min="0"></label>
+        <label>WhatsApp Support<input id="supportWa" placeholder="08xxxxxxxxxx"></label>
+        <label class="wide">Catatan Reward<textarea id="rewardNote" rows="3"></textarea></label>
+        <label class="wide">Profil Solusi Genz<textarea id="companyProfile" rows="4"></textarea></label>
+        <label class="wide">Judul Tentang Kami<input id="aboutTitle"></label>
+        <label class="wide">Isi Tentang Kami<textarea id="aboutText" rows="5"></textarea></label>
+      </div>
+
+      <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <button id="saveSettingsBtn" class="btn btn-primary">Simpan Pengaturan</button>
+        <span id="settingsMsg" style="font-size:10px;color:#667085"></span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="supabase-config.js"></script>
+<script src="assets/store-settings.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let token=sessionStorage.getItem('sg_admin_token')||'';
+let allOrders=[];
+let currentLogoData='';
+
+function headers(){const h={'Content-Type':'application/json','apikey':window.SG_SUPABASE_KEY};if(token)h.Authorization='Bearer '+token;return h}
+function api(path,opts={}){return fetch(window.SG_SUPABASE_URL+path,{...opts,headers:{...headers(),...(opts.headers||{})},cache:'no-store'})}
+function money(n){return 'Rp '+Number(n||0).toLocaleString('id-ID')}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function showLogin(msg=''){
+  $('loginView').classList.remove('hidden');$('adminView').classList.add('hidden');
+  if(msg){$('loginMsg').textContent=msg;$('loginMsg').classList.remove('hidden')}else $('loginMsg').classList.add('hidden');
+}
+function showAdmin(email){$('loginView').classList.add('hidden');$('adminView').classList.remove('hidden');$('adminEmail').textContent=email||''}
+
+async function login(){
+  const email=$('email').value.trim(),password=$('password').value;
+  if(!email||!password){showLogin('Isi email dan password admin.');return}
+  $('loginBtn').disabled=true;$('loginBtn').textContent='Masuk...';
+  try{
+    const r=await api('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password})});
+    const t=await r.text(); if(!r.ok)throw new Error(t);
+    const d=JSON.parse(t); token=d.access_token;
+    sessionStorage.setItem('sg_admin_token',token);sessionStorage.setItem('sg_admin_email',email);
+    showAdmin(email);
+    await Promise.all([loadOrders(),loadSettings()]);
+  }catch(e){console.error(e);showLogin('Login gagal. Pastikan akun admin benar dan terdaftar.')}
+  finally{$('loginBtn').disabled=false;$('loginBtn').textContent='Masuk Dashboard'}
+}
+
+async function loadOrders(){
+  $('ordersMsg').classList.add('hidden');$('ordersBody').innerHTML='<tr><td colspan="7">Memuat...</td></tr>';
+  try{
+    const r=await api('/rest/v1/rpc/sg_admin_list_orders',{method:'POST',body:'{}'});
+    const t=await r.text();if(!r.ok)throw new Error(t);
+    allOrders=t?JSON.parse(t):[];renderOrders();
+  }catch(e){console.error(e);$('ordersBody').innerHTML='';$('ordersMsg').textContent='Pesanan belum dapat dimuat.';$('ordersMsg').classList.remove('hidden')}
+}
+function renderOrders(){
+  const f=$('filterStatus').value,rows=f?allOrders.filter(o=>o.status===f):allOrders;
+  $('statOrders').textContent=allOrders.length;
+  $('statVerify').textContent=allOrders.filter(o=>o.status==='Menunggu Verifikasi').length;
+  $('statProcess').textContent=allOrders.filter(o=>o.status==='Diproses').length;
+  $('statRevenue').textContent=money(allOrders.filter(o=>['Lunas','Dibayar','Diproses','Selesai'].includes(o.status)).reduce((a,o)=>a+Number(o.price||0),0));
+  $('ordersBody').innerHTML=rows.length?rows.map(o=>`<tr><td><b>${esc(o.invoice)}</b></td><td>${esc(o.customer_name)}<br><small>${esc(o.email)}</small></td><td>${esc(o.product_name)}</td><td>${money(o.price)}</td><td>${esc(o.payment_method||'-')}</td><td><span class="pill">${esc(o.status)}</span></td><td><div class="actions"><button data-i="${esc(o.invoice)}" data-s="Lunas">Lunas</button><button data-i="${esc(o.invoice)}" data-s="Diproses">Proses</button><button data-i="${esc(o.invoice)}" data-s="Selesai">Selesai</button><button data-i="${esc(o.invoice)}" data-s="Dibatalkan">Batal</button></div></td></tr>`).join(''):'<tr><td colspan="7">Belum ada pesanan.</td></tr>';
+  document.querySelectorAll('.actions button').forEach(b=>b.onclick=()=>setStatus(b.dataset.i,b.dataset.s));
+}
+async function setStatus(invoice,status){
+  if(!confirm(`Ubah ${invoice} menjadi ${status}?`))return;
+  const r=await api('/rest/v1/rpc/sg_admin_set_status',{method:'POST',body:JSON.stringify({p_invoice:invoice,p_status:status})});
+  if(!r.ok){alert('Status gagal diubah.');return}await loadOrders();
+}
+
+function setLogoPreview(data){
+  currentLogoData=data||'';
+  $('logoPreview').innerHTML=currentLogoData?`<img src="${currentLogoData}" alt="Logo">`:'S';
+}
+function resizeLogo(file){
+  return new Promise((resolve,reject)=>{
+    const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{
+      const max=420,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*scale),h=Math.round(img.height*scale);
+      const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/webp',.86));
+    };img.onerror=reject;img.src=fr.result};fr.onerror=reject;fr.readAsDataURL(file)
+  });
+}
+
+async function loadSettings(){
+  $('settingsMsg').textContent='Memuat pengaturan...';
+  try{
+    const r=await api('/rest/v1/rpc/sg_admin_get_store_settings',{method:'POST',body:'{}'});
+    const t=await r.text();if(!r.ok)throw new Error(t);
+    const rows=t?JSON.parse(t):[],s=Array.isArray(rows)?rows[0]:rows;
+    if(!s)throw new Error('Data pengaturan kosong');
+    $('heroTitle').value=s.hero_title||'';$('heroSubtitle').value=s.hero_subtitle||'';$('promoTitle').value=s.promo_title||'';$('promoDiscount').value=s.promo_discount||'30';
+    $('rewardPerPurchase').value=s.reward_per_purchase||'1';$('rewardNote').value=s.reward_note||'';$('companyProfile').value=s.company_profile||'';
+    $('aboutTitle').value=s.about_title||'Tentang Kami';$('aboutText').value=s.about_text||'';$('supportWa').value=s.support_whatsapp||'';
+    setLogoPreview(s.logo_data_url||'');$('settingsMsg').textContent='Pengaturan siap diedit.';
+  }catch(e){console.error(e);$('settingsMsg').textContent='Pengaturan gagal dimuat. Pastikan SQL V13.2 sudah sukses.';$('settingsMsg').className='err'}
+}
+
+async function saveSettings(){
+  $('settingsMsg').textContent='Menyimpan...';$('settingsMsg').className='';
+  const body={
+    p_hero_title:$('heroTitle').value.trim(),p_hero_subtitle:$('heroSubtitle').value.trim(),
+    p_promo_title:$('promoTitle').value.trim(),p_promo_discount:String($('promoDiscount').value||'0'),
+    p_reward_per_purchase:String($('rewardPerPurchase').value||'0'),p_reward_note:$('rewardNote').value.trim(),
+    p_company_profile:$('companyProfile').value.trim(),p_about_title:$('aboutTitle').value.trim(),
+    p_about_text:$('aboutText').value.trim(),p_support_whatsapp:$('supportWa').value.trim(),
+    p_logo_data_url:currentLogoData
+  };
+  try{
+    const r=await api('/rest/v1/rpc/sg_admin_save_store_settings',{method:'POST',body:JSON.stringify(body)});
+    const t=await r.text();if(!r.ok)throw new Error(t);
+    $('settingsMsg').textContent='Berhasil disimpan. Refresh halaman konsumen untuk melihat perubahan.';$('settingsMsg').className='ok';
+  }catch(e){console.error(e);$('settingsMsg').textContent='Gagal menyimpan. Coba logout-login admin lalu simpan lagi.';$('settingsMsg').className='err'}
+}
+
+$('loginBtn').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+$('logoutBtn').onclick=()=>{sessionStorage.clear();token='';showLogin()};
+$('refreshBtn').onclick=()=>Promise.all([loadOrders(),loadSettings()]);
+$('filterStatus').onchange=renderOrders;$('saveSettingsBtn').onclick=saveSettings;
+$('logoFile').onchange=async()=>{const f=$('logoFile').files[0];if(f)setLogoPreview(await resizeLogo(f))};
+$('removeLogo').onclick=()=>{setLogoPreview('');$('logoFile').value=''};
+
+if(token){showAdmin(sessionStorage.getItem('sg_admin_email')||'Admin');Promise.all([loadOrders(),loadSettings()])}else showLogin();
+sgLoadSettings();
+</script>
+</body>
+</html>
