@@ -8,9 +8,16 @@ async function load(){
   const er=await call("sg_affiliate_eligibility",{p_email:email}),elig=Array.isArray(er)?er[0]:er;
   if(!elig?.eligible){locked.style.display="block";affiliateContent.style.display="none";return}
   locked.style.display="none";affiliateContent.style.display="block";
-  let s=null;
+  let s=null, code="";
+  // Self-heal: pastikan record affiliate dibuat dulu. Ini menghindari halaman terus
+  // berhenti di "kode referral sedang disinkronkan" ketika tabel dilindungi RLS.
+  try{
+    const reg=await call("sg_affiliate_register",{p_email:email,p_user_id:localStorage.getItem("sg_user_id")||null});
+    code=typeof reg==="string"?reg:(Array.isArray(reg)?reg[0]:reg)||"";
+  }catch(e){console.warn("affiliate register",e)}
+  try{await call("sg_affiliate_sync_self",{p_email:email})}catch(e){console.warn("affiliate sync",e)}
   try{const p=await call("sg_affiliate_me",{p_email:email});s=Array.isArray(p)?p[0]:p}catch(e){console.warn("sg_affiliate_me fallback",e)}
-  let code=s?.referral_code||await directAffiliateCode();
+  code=s?.referral_code||code||await directAffiliateCode();
   if(!code){
     /* Kode referral lama dibuat dari 8 karakter awal MD5 email. Jika RPC statistik belum siap,
        link tetap boleh tampil untuk akun yang sudah lolos eligibility. */

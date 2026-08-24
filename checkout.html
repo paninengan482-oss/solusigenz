@@ -7,6 +7,7 @@ ppriceEl.value="Rp "+price.toLocaleString("id-ID");
 nameEl.value=localStorage.getItem("sg_user_name")||"";
 emailEl.value=localStorage.getItem("sg_user_email")||"";
 function inv(){const a=new Uint8Array(6);crypto.getRandomValues(a);return"SGZ-"+Array.from(a,b=>b.toString(16).padStart(2,"0")).join("").toUpperCase()}
+async function getAccountRef(){let ref=(localStorage.getItem("sg_ref_code")||"").trim().toUpperCase();if(ref||!token)return ref;try{const r=await fetch(window.SG_SUPABASE_URL+"/auth/v1/user",{headers:{"apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+token}});if(r.ok){const u=await r.json();ref=(u?.user_metadata?.referral_code||"").trim().toUpperCase();if(ref)localStorage.setItem("sg_ref_code",ref)}}catch(_){ }return ref}
 orderBtnEl.onclick=async()=>{
   if(!nameEl.value.trim()||!waEl.value.trim()||!emailEl.value.trim()){alert("Lengkapi data.");return}
   const invoice=inv();
@@ -14,7 +15,7 @@ orderBtnEl.onclick=async()=>{
   msgEl.textContent="Menghubungkan ke database...";
   try{
     const buyerEmail=emailEl.value.trim();
-    const ref=(localStorage.getItem("sg_ref_code")||"").trim().toUpperCase();
+    const ref=await getAccountRef();
     // Self-heal referral link before order creation. This retries the registration link
     // if signup/login previously failed to attach it.
     if(ref&&token){
