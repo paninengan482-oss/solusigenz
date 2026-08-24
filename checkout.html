@@ -13,11 +13,21 @@ orderBtnEl.onclick=async()=>{
   orderBtnEl.disabled=true;
   msgEl.textContent="Menghubungkan ke database...";
   try{
-    let body={p_invoice:invoice,p_product_name:product,p_price:price,p_customer_name:nameEl.value.trim(),p_whatsapp:waEl.value.trim(),p_email:emailEl.value.trim(),p_payment_method:methodEl.value};
+    const buyerEmail=emailEl.value.trim();
+    const ref=(localStorage.getItem("sg_ref_code")||"").trim().toUpperCase();
+    // Self-heal referral link before order creation. This retries the registration link
+    // if signup/login previously failed to attach it.
+    if(ref&&token){
+      try{
+        await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_affiliate_attach_referral",{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+token},body:JSON.stringify({p_buyer_email:buyerEmail,p_buyer_user_id:uid||null,p_referral_code:ref})});
+      }catch(_){ }
+    }
+    if(token){try{await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_affiliate_sync_self",{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+token},body:JSON.stringify({p_email:buyerEmail})})}catch(_){ }}
+    let body={p_invoice:invoice,p_product_name:product,p_price:price,p_customer_name:nameEl.value.trim(),p_whatsapp:waEl.value.trim(),p_email:buyerEmail,p_payment_method:methodEl.value};
     const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_create_order",{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+window.SG_SUPABASE_KEY},body:JSON.stringify(body)});
     if(!r.ok)throw Error(await r.text());
     try{
-      await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_affiliate_attach_order",{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+token},body:JSON.stringify({p_invoice:invoice,p_buyer_user_id:uid||null,p_buyer_email:emailEl.value.trim()})})
+      await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_affiliate_attach_order",{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+token},body:JSON.stringify({p_invoice:invoice,p_buyer_user_id:uid||null,p_buyer_email:buyerEmail})})
     }catch(_){}
     location.replace("status.html?id="+encodeURIComponent(invoice)+"&new=1")
   }catch(e){
