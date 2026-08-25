@@ -1,7 +1,36 @@
--- SOLUSI GENZ V15 - FLOW FINAL SESUAI RANGKUMAN REVISI
+-- SOLUSI GENZ V15.1 - FLOW FINAL + DATABASE COMPATIBILITY FIX
 -- Jalankan SEKALI di Supabase SQL Editor SETELAH backup database.
 -- Tidak menghapus pesanan lama. Menambahkan flow bukti bayar, akses produk,
 -- affiliate fixed per durasi, saldo/withdraw, notifikasi dan komunitas.
+
+
+-- =========================================================
+-- V15.1 COMPATIBILITY PREFLIGHT (database versi lama)
+-- Menghapus hanya RPC/function Solusi Genz yang akan dibuat ulang.
+-- Data tabel/pesanan TIDAK dihapus.
+-- =========================================================
+do $$
+declare r record;
+begin
+  for r in
+    select p.oid::regprocedure as sig
+    from pg_proc p
+    join pg_namespace n on n.oid=p.pronamespace
+    where n.nspname='public' and p.proname = any(array[
+      'sg_notify','sg_my_notifications','sg_mark_notification_read','sg_create_order',
+      'sg_submit_payment','sg_my_order_details','sg_my_orders','sg_admin_list_orders',
+      'sg_admin_verify_payment','sg_admin_send_access','sg_make_referral_code',
+      'sg_affiliate_register','sg_affiliate_attach_referral','sg_commission_by_duration',
+      'sg_sync_commission_for_order','sg_order_affiliate_trigger','sg_affiliate_eligibility',
+      'sg_affiliate_me','sg_affiliate_commissions','sg_request_withdraw','sg_my_withdrawals',
+      'sg_admin_list_withdrawals','sg_admin_finish_withdraw','sg_customer_community',
+      'sg_admin_save_flow_settings','sg_public_extra_settings','sg_admin_get_flow_settings',
+      'sg_owner_affiliate_summary','sg_apply_affiliate_commission_on_paid'
+    ])
+  loop
+    execute 'drop function if exists '||r.sig||' cascade';
+  end loop;
+end $$;
 
 -- =========================================================
 -- 0. STATUS PESANAN YANG KONSISTEN
@@ -63,6 +92,14 @@ create table if not exists public.sg_notifications (
  read_at timestamptz,
  created_at timestamptz not null default now()
 );
+-- Kompatibilitas tabel notifikasi dari versi lama
+alter table public.sg_notifications add column if not exists email text;
+alter table public.sg_notifications add column if not exists category text default 'Info';
+alter table public.sg_notifications add column if not exists title text;
+alter table public.sg_notifications add column if not exists message text default '';
+alter table public.sg_notifications add column if not exists action_url text;
+alter table public.sg_notifications add column if not exists read_at timestamptz;
+alter table public.sg_notifications add column if not exists created_at timestamptz default now();
 alter table public.sg_notifications enable row level security;
 create index if not exists sg_notifications_email_created_idx on public.sg_notifications(lower(email),created_at desc);
 
