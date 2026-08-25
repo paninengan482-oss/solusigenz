@@ -1,15 +1,13 @@
-SOLUSI GENZ V15.9 - ADMIN ROUTING FIX
+SOLUSI GENZ V15.10 - FIX KIRIM AKSES
 
-Ganti file supabase-config.js di root GitHub dengan file ini.
+1. Upload admin-access-v2.js ke ROOT repo GitHub solusigenz.
+2. Buka admin.html.
+3. Tepat sebelum </body>, tambahkan:
+   <script src="admin-access-v2.js"></script>
+4. Commit ke main.
+5. Tunggu Vercel Ready.
+6. Refresh Dashboard Admin.
+7. Klik Kirim Akses pada pesanan Diproses.
 
-Langkah:
-1. GitHub repo solusigenz.
-2. Add file -> Upload files.
-3. Upload supabase-config.js dari folder ini ke ROOT repository.
-4. Jika GitHub meminta replace/overwrite, lanjutkan.
-5. Commit ke main: Solusi Genz V15.9 Admin Routing Fix
-6. Tunggu Vercel Ready.
-7. Refresh halaman login.
-8. Login dengan ID Admin seperti biasa.
-
-Tidak perlu SQL.
+Patch ini memanggil RPC baru:
+sg_admin_send_access_v2
