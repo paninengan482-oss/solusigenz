@@ -77,12 +77,11 @@ $("submit").onclick=async()=>{
       const d=await authReq("/auth/v1/token?grant_type=password",{email:em,password:pw});
 
       if(isAdminLogin){
-        await SGCore.rpc("sg_admin_list_orders",{},d.access_token,"admin");
-
+        // Tidak melakukan preflight RPC di halaman login.
+        // Simpan sesi dulu, lalu Dashboard Admin yang akan menangani data.
         SGCore.clearUser();
         sessionStorage.setItem("sg_admin_token",d.access_token);
         sessionStorage.setItem("sg_admin_email",ADMIN_EMAIL);
-
         location.replace("admin.html");
         return;
       }
@@ -91,14 +90,13 @@ $("submit").onclick=async()=>{
       localStorage.setItem("sg_user_email",em);
       localStorage.setItem("sg_user_name",d.user?.user_metadata?.full_name||em.split("@")[0]);
       localStorage.setItem("sg_user_id",d.user?.id||"");
-
       location.replace("shop.html");
     }
   }catch(e){
     console.error(e);
     show(reg
       ?"Pendaftaran belum berhasil. Email mungkin sudah terdaftar."
-      :"Email/ID atau password salah, atau akun Admin belum diberi hak Admin."
+      :"Email/ID atau password salah."
     );
   }finally{
     $("submit").disabled=false;
