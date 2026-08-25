@@ -1,3 +1,2 @@
 JavaScript syntax audit: PASS
-Revision scope: visual/theme + affiliate presentation only.
 No SQL included.
