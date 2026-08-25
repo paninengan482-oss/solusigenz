@@ -1,11 +1,4 @@
 (function(){
-  function getProofFromButton(btn){
-    var invoice = btn.getAttribute("data-proof-invoice");
-    if(!invoice || !window.allOrders) return "";
-    var order = window.allOrders.find(function(o){ return String(o.invoice) === String(invoice); });
-    return order && order.payment_proof_data_url ? order.payment_proof_data_url : "";
-  }
-
   function ensureModal(){
     var existing = document.getElementById("sgProofModal");
     if(existing) return existing;
@@ -25,14 +18,16 @@
           style="position:absolute;right:14px;top:14px;border:0;border-radius:999px;width:38px;height:38px;
                  font-size:22px;cursor:pointer;background:#111827;color:#fff;z-index:2">×</button>
         <div style="padding:6px 48px 12px 6px;font-weight:700;font-size:18px">Bukti Pembayaran</div>
-        <div id="sgProofFrame" style="overflow:auto;max-height:80vh;text-align:center;background:#f3f4f6;border-radius:12px;padding:10px"></div>
+        <div id="sgProofFrame"
+          style="overflow:auto;max-height:80vh;text-align:center;background:#f3f4f6;border-radius:12px;padding:10px"></div>
       </div>`;
 
     document.body.appendChild(modal);
 
     function close(){
       modal.style.display = "none";
-      document.getElementById("sgProofFrame").innerHTML = "";
+      var frame = document.getElementById("sgProofFrame");
+      if(frame) frame.innerHTML = "";
     }
 
     document.getElementById("sgProofClose").onclick = close;
@@ -46,6 +41,7 @@
       alert("Bukti pembayaran tidak ditemukan.");
       return;
     }
+
     var modal = ensureModal();
     var frame = document.getElementById("sgProofFrame");
     frame.innerHTML = "";
@@ -65,26 +61,41 @@
       a.style.cssText = "display:inline-block;padding:12px 16px;background:#2563eb;color:#fff;border-radius:10px;text-decoration:none";
       frame.appendChild(a);
     }
+
     modal.style.display = "flex";
   }
 
   function patchProofLinks(){
     document.querySelectorAll('#ordersBody a.btn-mini').forEach(function(a){
-      if(a.textContent.trim().toLowerCase().includes("lihat bukti")){
-        var href = a.getAttribute("href") || "";
-        a.removeAttribute("href");
-        a.removeAttribute("target");
-        a.style.cursor = "pointer";
-        a.onclick = function(e){
-          e.preventDefault();
-          openProof(href);
-        };
-      }
+      if(!a.textContent.trim().toLowerCase().includes("lihat bukti")) return;
+
+      // PENTING: jangan patch ulang link yang sama.
+      if(a.dataset.sgProofPatched === "1") return;
+
+      var href = a.getAttribute("href") || "";
+      if(!href) return;
+
+      // Simpan data bukti sebelum href dihapus.
+      a.dataset.sgProofUrl = href;
+      a.dataset.sgProofPatched = "1";
+
+      a.removeAttribute("href");
+      a.removeAttribute("target");
+      a.style.cursor = "pointer";
+
+      a.addEventListener("click", function(e){
+        e.preventDefault();
+        openProof(a.dataset.sgProofUrl || "");
+      });
     });
   }
 
-  var observer = new MutationObserver(patchProofLinks);
+  var observer = new MutationObserver(function(){
+    patchProofLinks();
+  });
+
   observer.observe(document.documentElement, {childList:true, subtree:true});
   document.addEventListener("DOMContentLoaded", patchProofLinks);
-  setTimeout(patchProofLinks, 800);
+  setTimeout(patchProofLinks, 300);
+  setTimeout(patchProofLinks, 1000);
 })();

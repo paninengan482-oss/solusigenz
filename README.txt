@@ -1,19 +1,20 @@
-SOLUSI GENZ V15.11 - FIX INVALID TIME VALUE
+SOLUSI GENZ V15.12 - FIX LIHAT BUKTI
 
-Penyebab:
-Field tanggal berakhir menerima nilai yang bukan tanggal valid, lalu JavaScript gagal di toISOString().
-
-Perbaikan:
-- Kosong = diperbolehkan
-- Format valid = YYYY-MM-DD
-- Nilai lain ditolak sebelum dikirim
-- Tombol Kirim Akses tetap memakai sg_admin_send_access_v2
+Penyebab bug:
+admin-proof-modal.js melakukan patch tombol Lihat Bukti berkali-kali.
+Patch pertama mengambil URL bukti lalu menghapus href.
+MutationObserver kemudian mem-patch tombol yang sama lagi dan membaca href kosong.
+Akibatnya muncul: "Bukti pembayaran tidak ditemukan."
 
 Cara pasang:
-1. Upload admin-access-v2.js ke ROOT repo GitHub.
-2. Replace file admin-access-v2.js yang lama.
-3. Commit ke main.
-4. Tunggu Vercel Ready.
-5. Refresh Dashboard Admin.
-6. Tes Kirim Akses.
-7. Pada tanggal berakhir, isi contoh 2026-09-26 atau kosongkan.
+1. Extract ZIP.
+2. Ambil admin-proof-modal.js.
+3. GitHub repo solusigenz -> upload ke ROOT.
+4. Replace admin-proof-modal.js yang lama.
+5. Commit ke main.
+6. Tunggu Vercel Ready.
+7. Refresh Dashboard Admin (Ctrl+Shift+R bila perlu).
+8. Klik Lihat Bukti.
+
+Tidak perlu SQL lagi untuk fix ini.
+Jangan ubah admin-access-v2.js yang sudah bekerja.
