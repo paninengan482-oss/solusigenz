@@ -1,59 +1,176 @@
 <!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Affiliate — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="v17-core.css"></head><body>
 <script>if(!localStorage.getItem("sg_user_token"))location.replace("auth.html")</script>
-<div class="app-shell"><aside class="sidebar"><a href="shop.html"><img class="sg-logo" src="solusi-genz-v2.svg"></a><nav class="side-nav"><a href="shop.html">Beranda</a><a href="status.html">Pesanan Saya</a><a class="active" href="affiliate.html">Affiliate</a><a href="profile.html">Profil</a></nav></aside><main class="main"><header class="topbar"><div><h1>Affiliate Saya</h1><p>Komisi berasal dari pembelian referral yang sudah valid.</p></div></header>
-<section id="locked" class="card panel affiliate-lock" style="display:none"><span class="badge">AKSES TERKUNCI</span><h2>Affiliate aktif setelah transaksi pertama.</h2><p class="muted">Selesaikan minimal satu transaksi valid.</p><a class="btn btn-primary" href="shop.html#produk">Lihat Produk</a></section>
-<div id="content" style="display:none"><section class="affiliate-card"><small>KODE & LINK REFERRAL</small><h2>Bagikan link, dapat komisi dari transaksi valid.</h2><div class="affiliate-link"><input id="refLink" readonly><button id="copyBtn">Salin</button></div></section>
-<section class="stats" style="margin-top:16px"><div class="card stat"><small>Total Referral</small><h3 id="refCount">0</h3></div><div class="card stat"><small>Sudah Belanja</small><h3 id="buyerCount">0</h3></div><div class="card stat"><small>Komisi Tertahan</small><h3 id="held">Rp 0</h3></div><div class="card stat"><small>Saldo Tersedia</small><h3 id="available">Rp 0</h3></div><div class="card stat"><small>Dalam Proses</small><h3 id="processing">Rp 0</h3></div><div class="card stat"><small>Total Komisi</small><h3 id="total">Rp 0</h3></div></section>
-<section class="card panel"><h3>Ajukan Pencairan</h3><form id="wdForm" class="product-admin-form"><div class="field"><label>Nominal</label><input id="wdAmount" type="number" min="0"></div><div class="field"><label>Metode</label><select id="wdMethod"><option>Bank Mandiri</option><option>DANA</option><option>GoPay</option><option>OVO</option><option>ShopeePay</option></select></div><div class="field"><label>Nama Pemilik</label><input id="wdName"></div><div class="field"><label>Nomor Rekening / E-wallet</label><input id="wdNumber"></div><div class="toolbar full"><button class="btn btn-primary" type="submit">Ajukan Pencairan</button></div></form><div id="wdMsg" class="notice" style="display:none"></div></section>
-<section class="card panel"><h3>Riwayat Komisi</h3><div class="table-wrap"><table class="table"><thead><tr><th>Invoice</th><th>Referral</th><th>Nilai Order</th><th>Komisi</th><th>Status</th><th>Tanggal</th></tr></thead><tbody id="commissionRows"></tbody></table></div></section>
-<section class="card panel"><h3>Riwayat Pencairan</h3><div class="table-wrap"><table class="table"><thead><tr><th>ID</th><th>Nominal</th><th>Metode</th><th>Status</th><th>Catatan</th><th>Pembayaran</th></tr></thead><tbody id="wdRows"></tbody></table></div></section></div></main></div>
+<div class="app-shell">
+<aside class="sidebar">
+  <a href="shop.html"><img class="sg-logo" src="solusi-genz-v2.svg"></a>
+  <nav class="side-nav"><a href="shop.html">Beranda</a><a href="status.html">Pesanan Saya</a><a class="active" href="affiliate.html">Affiliate</a><a href="profile.html">Profil</a></nav>
+</aside>
+<main class="main">
+<header class="topbar"><div><h1>Affiliate Team</h1><p>Performa tim, komisi, dan pencairan Solusi Genz.</p></div></header>
+
+<section id="locked" class="card panel affiliate-lock" style="display:none">
+  <span class="badge">AKSES TERKUNCI</span>
+  <h2>Affiliate aktif setelah transaksi pertama.</h2>
+  <p class="muted">Selesaikan minimal satu transaksi valid.</p>
+  <a class="btn btn-primary" href="shop.html#produk">Lihat Produk</a>
+</section>
+
+<div id="content" style="display:none">
+  <section class="sg-team-hero">
+    <span class="sg-team-kicker">SOLUSI GENZ • TEAM PERFORMANCE</span>
+    <h2>Bangun tim. Pantau hasil. Tumbuh bersama.</h2>
+    <p>Dashboard ringkas untuk melihat perkembangan tim referral, checkout berhasil, komisi, dan pencairan dalam satu tampilan.</p>
+    <div class="affiliate-link" style="max-width:760px;margin-top:20px">
+      <input id="refLink" readonly>
+      <button id="copyBtn">Salin Link Tim</button>
+    </div>
+  </section>
+
+  <section class="sg-team-stats">
+    <div class="sg-team-stat"><span>Total Tim</span><strong id="refCount">0</strong><small>Anggota terhubung</small></div>
+    <div class="sg-team-stat"><span>Tim Sudah Checkout</span><strong id="buyerCount">0</strong><small>Transaksi referral valid</small></div>
+    <div class="sg-team-stat"><span>Total Komisi</span><strong id="total">Rp 0</strong><small>Akumulasi komisi tim</small></div>
+    <div class="sg-team-stat"><span>Pencairan Diterima</span><strong id="paidOut">Rp 0</strong><small>Sudah berhasil dibayar</small></div>
+  </section>
+
+  <section class="sg-team-performance">
+    <div class="sg-team-panel">
+      <h3>Aktivitas Tim</h3>
+      <p>Ringkasan checkout tim terbaru. Identitas dibuat lebih rapi untuk kebutuhan branding.</p>
+      <div id="teamActivity" class="sg-team-list"><div class="muted">Memuat aktivitas tim...</div></div>
+    </div>
+    <div class="sg-team-panel">
+      <h3>Saldo & Pencairan</h3>
+      <p>Status komisi yang sedang berjalan.</p>
+      <div class="sg-team-stats" style="grid-template-columns:1fr 1fr;margin-top:12px">
+        <div class="sg-team-stat"><span>Komisi Tertahan</span><strong id="held">Rp 0</strong><small>Menunggu pesanan selesai</small></div>
+        <div class="sg-team-stat"><span>Saldo Tersedia</span><strong id="available">Rp 0</strong><small>Siap diajukan</small></div>
+        <div class="sg-team-stat"><span>Dalam Proses</span><strong id="processing">Rp 0</strong><small>Pengajuan berjalan</small></div>
+        <div class="sg-team-stat"><span>Status</span><strong style="font-size:18px">Aktif</strong><small>Program affiliate</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card panel">
+    <div class="section-head"><div><h3>Ajukan Pencairan</h3><p class="muted">Ajukan saldo tersedia ke rekening atau e-wallet.</p></div></div>
+    <form id="wdForm" class="product-admin-form">
+      <div class="field"><label>Nominal</label><input id="wdAmount" type="number" min="0"></div>
+      <div class="field"><label>Metode</label><select id="wdMethod"><option>Bank Mandiri</option><option>DANA</option><option>GoPay</option><option>OVO</option><option>ShopeePay</option></select></div>
+      <div class="field"><label>Nama Pemilik</label><input id="wdName"></div>
+      <div class="field"><label>Nomor Rekening / E-wallet</label><input id="wdNumber"></div>
+      <div class="toolbar full"><button class="btn btn-primary" type="submit">Ajukan Pencairan</button></div>
+    </form>
+    <div id="wdMsg" class="notice" style="display:none"></div>
+  </section>
+
+  <section class="card panel">
+    <h3>Riwayat Pencairan</h3>
+    <p class="muted">Catatan pencairan tim affiliate.</p>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>ID</th><th>Nominal</th><th>Metode</th><th>Status</th><th>Catatan</th><th>Pembayaran</th></tr></thead>
+      <tbody id="wdRows"></tbody>
+    </table></div>
+  </section>
+</div>
+</main>
+</div>
+
 <script src="supabase-config.js"></script><script src="sg-core.js"></script><script>
 (()=>{
-const $=id=>document.getElementById(id),email=(localStorage.getItem("sg_user_email")||"").toLowerCase(),money=n=>"Rp "+Number(n||0).toLocaleString("id-ID"),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $=id=>document.getElementById(id),
+email=(localStorage.getItem("sg_user_email")||"").toLowerCase(),
+money=n=>"Rp "+Number(n||0).toLocaleString("id-ID"),
+esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 function paymentBadge(status){
-  const s=String(status||"").toLowerCase();
-  if(s==="dibayar"){
-    return '<span style="display:inline-flex;align-items:center;gap:8px;color:#2563eb;font-weight:800;white-space:nowrap"><span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#2563eb;color:#fff;font-size:15px;font-weight:900">✓</span>Pembayaran Berhasil</span>';
-  }
-  if(s==="ditolak"){
-    return '<span style="display:inline-flex;align-items:center;gap:7px;color:#b91c1c;font-weight:800"><span style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fee2e2;color:#b91c1c">×</span>Ditolak</span>';
-  }
-  return '<span style="display:inline-flex;align-items:center;gap:7px;color:#64748b;font-weight:700"><span style="width:8px;height:8px;border-radius:50%;background:#94a3b8"></span>Menunggu</span>';
+ const s=String(status||"").toLowerCase();
+ if(s==="dibayar")return '<span style="display:inline-flex;align-items:center;gap:8px;color:#7391ff;font-weight:800;white-space:nowrap"><span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#4d73ff;color:#fff;font-size:15px;font-weight:900">✓</span>Pembayaran Berhasil</span>';
+ if(s==="ditolak")return '<span style="color:#f97066;font-weight:800">Ditolak</span>';
+ return '<span style="color:#9da5b2;font-weight:750">Menunggu</span>';
+}
+
+function teamName(email,index){
+ const raw=String(email||"").split("@")[0].replace(/[._-]+/g," ").trim();
+ const first=raw.split(/\s+/)[0]||"Member";
+ const safe=first.charAt(0).toUpperCase()+first.slice(1,8);
+ return safe+" • Team "+String(index+1).padStart(2,"0");
+}
+
+function renderTeamActivity(rows){
+ const list=$("teamActivity");
+ if(!rows.length){list.innerHTML='<div class="muted">Belum ada aktivitas checkout tim.</div>';return}
+ const latest=rows.slice(0,8);
+ list.innerHTML=latest.map((r,i)=>`
+   <div class="sg-team-row">
+     <div class="sg-team-person">
+       <div class="sg-team-avatar">${esc(teamName(r.buyer_email,i).slice(0,2).toUpperCase())}</div>
+       <div><b>${esc(teamName(r.buyer_email,i))}</b><small>Checkout referral berhasil</small></div>
+     </div>
+     <div class="sg-team-value">${money(r.commission_amount)}</div>
+     <div class="sg-team-status">${esc(r.status==="dibayar"?"Komisi Dibayar":r.status==="tersedia"?"Komisi Tersedia":"Tercatat")}</div>
+   </div>`).join("");
 }
 
 async function load(){
  try{
   const elig=(await SGCore.rpc("sg_affiliate_eligibility",{p_email:email},"user"))?.[0];
   if(!elig?.eligible){$("locked").style.display="block";$("content").style.display="none";return}
+
   $("locked").style.display="none";$("content").style.display="block";
+
   const me=(await SGCore.rpc("sg_affiliate_me",{p_email:email},"user"))?.[0];
   $("refLink").value=location.origin+"/auth.html?mode=register&ref="+encodeURIComponent(me?.referral_code||"");
-  $("refCount").textContent=me?.total_referrals||0;$("buyerCount").textContent=me?.total_buyers||0;$("held").textContent=money(me?.held_commission);$("available").textContent=money(me?.available_commission);$("processing").textContent=money(me?.processing_commission);$("total").textContent=money(me?.total_commission);
+  $("refCount").textContent=me?.total_referrals||0;
+  $("buyerCount").textContent=me?.total_buyers||0;
+  $("held").textContent=money(me?.held_commission);
+  $("available").textContent=money(me?.available_commission);
+  $("processing").textContent=money(me?.processing_commission);
+  $("total").textContent=money(me?.total_commission);
 
   const cr=await SGCore.rpc("sg_affiliate_commissions",{p_email:email},"user")||[];
-  $("commissionRows").innerHTML=cr.length?cr.map(r=>`<tr><td>${esc(r.invoice)}</td><td>${esc(r.buyer_email)}</td><td>${money(r.order_amount)}</td><td>${money(r.commission_amount)}</td><td><span class="pill">${esc(r.status)}</span></td><td>${new Date(r.created_at).toLocaleDateString("id-ID")}</td></tr>`).join(""):'<tr><td colspan="6">Belum ada komisi.</td></tr>';
+  renderTeamActivity(cr);
 
   const wr=await SGCore.rpc("sg_my_withdrawals",{},"user")||[];
-  $("wdRows").innerHTML=wr.length?wr.map(w=>`<tr><td>#${w.id}</td><td>${money(w.amount)}</td><td>${esc(w.method)}<br><small>${esc(w.account_name)} · ${esc(w.account_number)}</small></td><td><span class="pill">${esc(w.status)}</span></td><td>${esc(w.admin_note||"-")}</td><td>${paymentBadge(w.status)}</td></tr>`).join(""):'<tr><td colspan="6">Belum ada pencairan.</td></tr>';
+  const paid=wr.filter(w=>String(w.status||"").toLowerCase()==="dibayar").reduce((a,w)=>a+Number(w.amount||0),0);
+  $("paidOut").textContent=money(paid);
+
+  $("wdRows").innerHTML=wr.length?wr.map(w=>`
+    <tr>
+      <td>#${w.id}</td>
+      <td>${money(w.amount)}</td>
+      <td>${esc(w.method)}<br><small>${esc(w.account_name)} · ${esc(w.account_number)}</small></td>
+      <td><span class="pill">${esc(w.status)}</span></td>
+      <td>${esc(w.admin_note||"-")}</td>
+      <td>${paymentBadge(w.status)}</td>
+    </tr>`).join(""):'<tr><td colspan="6">Belum ada pencairan.</td></tr>';
+
  }catch(e){
   console.error(e);
   if(e.message!=="SESSION_EXPIRED"){
-    $("locked").style.display="block";
-    $("content").style.display="none";
-    $("locked").innerHTML='<span class="badge">AFFILIATE</span><h2>Affiliate belum dapat dimuat.</h2><p class="muted">Coba Refresh halaman.</p>';
+   $("locked").style.display="block";$("content").style.display="none";
+   $("locked").innerHTML='<span class="badge">AFFILIATE</span><h2>Affiliate belum dapat dimuat.</h2><p class="muted">Coba Refresh halaman.</p>';
   }
  }
 }
 
-$("copyBtn").onclick=async()=>{try{await navigator.clipboard.writeText($("refLink").value);$("copyBtn").textContent="Tersalin";setTimeout(()=>$("copyBtn").textContent="Salin",1200)}catch(_){}};
+$("copyBtn").onclick=async()=>{
+ try{
+  await navigator.clipboard.writeText($("refLink").value);
+  $("copyBtn").textContent="Link Tersalin ✓";
+  setTimeout(()=>$("copyBtn").textContent="Salin Link Tim",1400);
+ }catch(_){}
+};
 
 $("wdForm").onsubmit=async e=>{
  e.preventDefault();
- $("wdMsg").style.display="block";
- $("wdMsg").textContent="Mengirim permintaan...";
+ $("wdMsg").style.display="block";$("wdMsg").textContent="Mengirim permintaan...";
  try{
-  await SGCore.rpc("sg_request_withdraw",{p_amount:Number($("wdAmount").value||0),p_method:$("wdMethod").value,p_account_name:$("wdName").value.trim(),p_account_number:$("wdNumber").value.trim()},"user");
+  await SGCore.rpc("sg_request_withdraw",{
+   p_amount:Number($("wdAmount").value||0),
+   p_method:$("wdMethod").value,
+   p_account_name:$("wdName").value.trim(),
+   p_account_number:$("wdNumber").value.trim()
+  },"user");
   $("wdMsg").textContent="Permintaan pencairan berhasil dikirim.";
   $("wdForm").reset();
   await load();
@@ -61,7 +178,6 @@ $("wdForm").onsubmit=async e=>{
   if(err.message!=="SESSION_EXPIRED")$("wdMsg").textContent="Belum dapat mengajukan pencairan.";
  }
 };
-
 load();
 })();
 </script></body></html>

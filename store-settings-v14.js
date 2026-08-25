@@ -1,3 +1,12 @@
+(function(){
+  if(!document.querySelector('link[data-sg-black-final]')){
+    const l=document.createElement("link");
+    l.rel="stylesheet";
+    l.href="solusi-genz-black-final.css";
+    l.setAttribute("data-sg-black-final","1");
+    document.head.appendChild(l);
+  }
+})();
 window.SG_DEFAULT_SETTINGS={
  hero_title:"Produk digital pilihan, akses lebih praktis.",
  hero_subtitle:"Belanja produk digital dengan alur yang jelas. Setelah transaksi pertama berhasil, kamu juga dapat mengaktifkan akses affiliate Solusi Genz.",

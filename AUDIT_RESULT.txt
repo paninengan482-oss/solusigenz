@@ -1,2 +1,3 @@
-Syntax audit: PASS
-Checked standalone and inline JavaScript with node --check.
+JavaScript syntax audit: PASS
+Revision scope: visual/theme + affiliate presentation only.
+No SQL included.
