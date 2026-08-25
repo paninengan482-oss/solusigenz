@@ -1,4 +1,13 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#05070d"><title>Solusi Genz — Produk Digital</title><link rel="stylesheet" href="revamp.css"></head><body>
+<!doctype html><html lang="id"><head><meta charset="utf-8"><script>
+(function(){
+  var h=location.hash||"", q=location.search||"";
+  var recovery=/type=recovery/i.test(h+q);
+  var hasToken=/access_token=|refresh_token=|token_hash=/i.test(h+q);
+  if(recovery||hasToken){
+    location.replace("reset-password.html"+q+h);
+  }
+})();
+</script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#05070d"><title>Solusi Genz — Produk Digital</title><link rel="stylesheet" href="revamp.css"></head><body>
 <nav class="nav dark-nav"><div class="container navin"><a class="brand" href="index.html"><span data-sg-logo><img src="solusi-genz-v2.svg" alt="Solusi Genz"></span></a><div class="navlinks"><a href="#tentang">Tentang</a><a href="#produk">Produk</a><a href="#affiliate-info">Affiliate</a><a href="#faq">FAQ</a><a href="auth.html" class="btn btn-ghost">Masuk</a><a href="auth.html?mode=register" class="btn btn-primary">Buat Akun</a></div></div></nav>
 <main>
 <section class="hero hero-premium"><div class="container hero-grid"><div><span class="badge badge-dark">SOLUSI DIGITAL UNTUK GEN Z</span><h1 id="landingHero">Produk digital yang lebih <span class="grad">praktis dan terarah.</span></h1><p id="landingSub">Pilih produk, buat pesanan, kirim bukti pembayaran, pantau verifikasi, lalu terima akses produk langsung melalui dashboard.</p><div class="hero-actions"><a class="btn btn-primary" href="auth.html?mode=register">Mulai Sekarang</a><a class="btn btn-ghost dark-ghost" href="#cara">Lihat Cara Pembelian</a></div><div class="trust"><span>✓ Status pesanan terpantau</span><span>✓ Verifikasi pembayaran oleh Admin</span><span>✓ Bantuan setelah pembelian</span></div></div><div class="brand-panel premium-brand"><img id="heroBrand" src="solusi-genz-v2.svg" alt="Solusi Genz"></div></div></section>
