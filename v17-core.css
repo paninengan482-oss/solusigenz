@@ -1,5 +1,4 @@
-@import url("solusi-genz-v19-final.css");
-/* V19 compatibility layer */
+@import url("solusi-genz-v20-clean.css");
 button:disabled{opacity:.55;cursor:not-allowed}
 .actions{display:flex;gap:6px;flex-wrap:wrap}
 .table td,.table th{vertical-align:middle}

@@ -1,2 +1,2 @@
 JavaScript syntax audit: PASS
-No SQL included.
+Visual revision only. No SQL.
