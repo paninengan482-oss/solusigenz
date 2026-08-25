@@ -1,0 +1,290 @@
+
+/* SOLUSI GENZ V21 — BLACK SIMPLE SAFE
+   Tampilan hitam polos. Sistem/fungsi tidak diubah. */
+
+:root{
+  --bg:#050505;
+  --panel:#0d0d0f;
+  --panel2:#121216;
+  --line:#25252b;
+  --text:#f5f5f7;
+  --muted:#9b9ba5;
+  --blue:#5b73ff;
+  --green:#62d99a;
+  --red:#ef6f6c;
+}
+
+html{background:var(--bg);color-scheme:dark}
+body{
+  background:#050505!important;
+  color:var(--text)!important;
+  min-height:100vh;
+  font-size:15px;
+}
+
+.nav,.dark-nav{
+  background:#070708!important;
+  border-bottom:1px solid #1f1f24!important;
+}
+
+.card,.panel,.value,.person,.right-card{
+  background:#0d0d0f!important;
+  border:1px solid var(--line)!important;
+  color:var(--text)!important;
+  box-shadow:none!important;
+}
+
+.app-shell{background:#050505!important}
+
+.sidebar{
+  background:#080809!important;
+  border-right:1px solid #202025!important;
+  box-shadow:none!important;
+}
+
+.sidebar .sg-logo{
+  background:#080809!important;
+  width:132px!important;
+  height:92px!important;
+  object-fit:contain!important;
+}
+
+.side-nav a{
+  color:#ababB4!important;
+  background:transparent!important;
+  border:1px solid transparent!important;
+  border-radius:11px!important;
+  font-size:13px!important;
+}
+
+.side-nav a:hover{
+  color:#fff!important;
+  background:#111114!important;
+  border-color:#24242a!important;
+}
+
+.side-nav a.active{
+  color:#fff!important;
+  background:#151519!important;
+  border-color:#2b2b32!important;
+  box-shadow:inset 3px 0 0 var(--blue)!important;
+}
+
+.main{
+  background:#050505!important;
+  max-width:1400px!important;
+  padding:28px 30px 44px!important;
+}
+
+.topbar h1,.welcome h2,.product-body h3,.sg-team-hero h2,.sg-team-panel h3{
+  color:#fff!important;
+}
+
+.topbar p,.muted,.sub,.lead,.product-body p,.welcome p{
+  color:var(--muted)!important;
+}
+
+.badge,.pill{
+  background:#17171b!important;
+  border:1px solid #2b2b31!important;
+  color:#e2e2e7!important;
+}
+
+.btn{
+  border-radius:11px!important;
+}
+
+.btn-primary{
+  background:#5570ff!important;
+  border:1px solid #6c83ff!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+
+.btn-ghost{
+  background:#121216!important;
+  border:1px solid #2a2a31!important;
+  color:#ededf1!important;
+}
+
+.field label{color:#d8d8de!important}
+.field input,.field select,.field textarea,
+.product-admin-form input,.product-admin-form select,.product-admin-form textarea{
+  background:#09090b!important;
+  color:#f5f5f7!important;
+  border:1px solid #292930!important;
+  box-shadow:none!important;
+}
+
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:#5b73ff!important;
+  box-shadow:0 0 0 3px rgba(91,115,255,.12)!important;
+}
+
+.welcome{
+  background:#111116!important;
+  border:1px solid #2a2a31!important;
+  box-shadow:none!important;
+  border-radius:18px!important;
+}
+
+.welcome:after{display:none!important}
+
+.affiliate-card{
+  background:#101014!important;
+  border:1px solid #292930!important;
+  box-shadow:none!important;
+}
+
+.product{
+  background:#0f0f12!important;
+  border:1px solid #24242a!important;
+  box-shadow:none!important;
+  border-radius:15px!important;
+  overflow:hidden!important;
+}
+
+.product:hover{
+  transform:translateY(-2px)!important;
+  border-color:#34343c!important;
+}
+
+.product-visual{
+  background:#0b0b0d!important;
+  border-bottom:1px solid #232329!important;
+}
+
+.product-visual img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.product-placeholder{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  background:#111116!important;
+  color:#c9c9d1!important;
+}
+
+.product-bottom b,
+.money-green,
+.sg-team-value,
+.sg-team-stat strong.money-green{
+  color:var(--green)!important;
+}
+
+.affiliate-welcome{
+  background:#0e2117!important;
+  border:1px solid rgba(98,217,154,.22)!important;
+  box-shadow:none!important;
+}
+
+.notif-item{
+  background:#0f0f12!important;
+  border:1px solid #24242a!important;
+  color:#f5f5f7!important;
+  border-radius:14px!important;
+}
+
+.notif-item.unread{
+  border-color:#32394c!important;
+  box-shadow:inset 3px 0 0 var(--blue)!important;
+}
+
+.notif-item b{color:#fff!important}
+.notif-item p{color:#a8a8b1!important}
+.notif-item small{color:#70707a!important}
+
+.success-notif{
+  background:#0d1d14!important;
+  border-color:rgba(98,217,154,.22)!important;
+}
+
+.success-pill{
+  background:rgba(98,217,154,.10)!important;
+  color:#76e1aa!important;
+  border-color:rgba(98,217,154,.20)!important;
+}
+
+.table-wrap{
+  background:#0a0a0c!important;
+  border:1px solid #232329!important;
+  border-radius:14px!important;
+}
+
+.table th{
+  background:#101013!important;
+  color:#7d7d87!important;
+  border-bottom:1px solid #24242a!important;
+}
+
+.table td{
+  color:#ddddE4!important;
+  border-bottom:1px solid #1d1d22!important;
+}
+
+.sg-team-hero,
+.sg-team-panel,
+.sg-team-stat,
+.sg-team-row{
+  background:#0f0f12!important;
+  border-color:#25252b!important;
+  box-shadow:none!important;
+}
+
+.sg-team-status{
+  background:rgba(98,217,154,.08)!important;
+  color:#76e1aa!important;
+  border-color:rgba(98,217,154,.20)!important;
+}
+
+.profile-avatar-wrap,
+.media-card{
+  background:#0f0f12!important;
+  border-color:#25252b!important;
+}
+
+.media-preview{
+  background:#09090b!important;
+  border-color:#232329!important;
+}
+
+@media(max-width:900px){
+  .main{padding:15px!important}
+  .sidebar{
+    border-right:0!important;
+    border-bottom:1px solid #232329!important;
+  }
+  .side-nav{
+    display:flex!important;
+    flex-direction:row!important;
+    overflow-x:auto!important;
+    gap:6px!important;
+    scrollbar-width:none!important;
+  }
+  .side-nav::-webkit-scrollbar{display:none}
+  .side-nav a{
+    min-width:max-content!important;
+    padding:9px 11px!important;
+    font-size:11px!important;
+  }
+  .side-nav a.active{
+    box-shadow:inset 0 -2px 0 var(--blue)!important;
+  }
+}
+
+@media(max-width:640px){
+  body{font-size:14px!important}
+  .main{padding:13px 12px 30px!important}
+  .topbar h1{font-size:22px!important}
+  .topbar p{font-size:11px!important}
+  .welcome{padding:20px!important}
+  .welcome h2{font-size:25px!important;line-height:1.14!important}
+  .products{grid-template-columns:1fr!important}
+  .panel{padding:15px!important}
+  .notif-item{grid-template-columns:1fr!important}
+  .notif-item .btn-mini{width:100%!important}
+}

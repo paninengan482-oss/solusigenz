@@ -15,30 +15,16 @@ window.sgApplyGlobalBrand=function(s){
 window.sgLoadSettings=async function(){
  let s={...window.SG_DEFAULT_SETTINGS};
  try{
-   const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_public_store_settings",{
-     method:"POST",
-     headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},
-     body:"{}",
-     cache:"no-store"
-   });
-   if(r.ok){
-     const rows=await r.json();
-     const row=Array.isArray(rows)?rows[0]:rows;
-     if(row)s={...s,...row};
-   }
+  const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_public_store_settings",{
+   method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},body:"{}",cache:"no-store"
+  });
+  if(r.ok){const rows=await r.json();const row=Array.isArray(rows)?rows[0]:rows;if(row)s={...s,...row}}
  }catch(e){}
  try{
-   const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_public_extra_settings",{
-     method:"POST",
-     headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},
-     body:"{}",
-     cache:"no-store"
-   });
-   if(r.ok){
-     const rows=await r.json();
-     const row=Array.isArray(rows)?rows[0]:rows;
-     if(row)s={...s,...row};
-   }
+  const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_public_extra_settings",{
+   method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},body:"{}",cache:"no-store"
+  });
+  if(r.ok){const rows=await r.json();const row=Array.isArray(rows)?rows[0]:rows;if(row)s={...s,...row}}
  }catch(e){}
  window.SG_STORE_SETTINGS=s;
  window.sgApplyGlobalBrand(s);

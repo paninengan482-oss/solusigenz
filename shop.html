@@ -1,27 +1,79 @@
 <!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard Pelanggan — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="v17-core.css"></head><body>
 <script>if(!localStorage.getItem("sg_user_token"))location.replace("auth.html")</script>
-<div class="app-shell"><aside class="sidebar"><a href="shop.html"><img class="sg-logo" src="solusi-genz-v2.svg"></a><nav class="side-nav"><a class="active" href="shop.html">Beranda</a><a href="#produk">Produk</a><a href="status.html">Pesanan Saya</a><a href="affiliate.html">Affiliate</a><a href="#notif">Notifikasi <span id="notifBadge" class="new-badge" style="display:none">0</span></a><a href="profile.html">Profil</a></nav><div style="margin-top:auto"><small id="sideEmail"></small><button id="logout" class="btn btn-ghost" style="width:100%;margin-top:10px">Keluar</button></div></aside>
-<main class="main"><header class="topbar"><div><h1>Halo, <span id="nm">Genz</span></h1><p>Semua pembelian dan status pesananmu ada di sini.</p></div><a class="btn btn-ghost" href="status.html">Pesanan Saya</a></header>
-<div class="shop-grid"><section><div class="welcome"><span class="badge">SOLUSI GENZ</span><h2 id="heroTitle">Langganan digital lebih mudah.</h2><p id="heroSubtitle">Pilih produk, checkout, kirim bukti pembayaran, lalu tunggu verifikasi.</p><a href="#produk" class="btn btn-primary">Lihat Produk →</a></div>
+<div class="app-shell">
+<aside class="sidebar"><a href="shop.html"><img class="sg-logo" src="solusi-genz-v2.svg"></a><nav class="side-nav"><a class="active" href="shop.html">Beranda</a><a href="#produk">Produk</a><a href="status.html">Pesanan Saya</a><a href="affiliate.html">Affiliate</a><a href="#notif">Notifikasi <span id="notifBadge" class="new-badge" style="display:none">0</span></a><a href="profile.html">Profil</a></nav><div style="margin-top:auto"><small id="sideEmail"></small><button id="logout" class="btn btn-ghost" style="width:100%;margin-top:10px">Keluar</button></div></aside>
+<main class="main">
+<header class="topbar"><div class="dashboard-person"><div id="topAvatar"></div><div><h1>Halo, <span id="nm">Genz</span></h1><p>Semua pembelian dan status pesananmu ada di sini.</p></div></div><a class="btn btn-ghost" href="status.html">Pesanan Saya</a></header>
+<div id="commissionWelcome" class="affiliate-welcome"><div><small>PROGRAM AFFILIATE AKTIF</small><h3>Selamat! Komisi affiliate Anda <span id="commissionWelcomeValue" class="money-green">Rp 0</span></h3></div><a class="btn btn-ghost" href="affiliate.html">Lihat Detail</a></div>
+<div class="shop-grid"><section>
+<div class="welcome"><span class="badge">SOLUSI GENZ</span><h2 id="heroTitle">Langganan digital lebih mudah.</h2><p id="heroSubtitle">Pilih produk, checkout, kirim bukti pembayaran, lalu tunggu verifikasi.</p><a href="#produk" class="btn btn-primary">Lihat Produk →</a></div>
 <section id="produk" style="margin-top:24px"><div class="section-head"><div><h2>Produk Digital</h2><p class="muted">Harga dan durasi mengikuti katalog aktif.</p></div></div><div id="productGrid" class="products"><div class="card product loading-card">Memuat produk...</div></div></section>
-<section id="notif" class="card panel" style="margin-top:24px"><div class="section-head"><div><h2>Notifikasi</h2><p class="muted">Update pembayaran, akses produk, dan affiliate.</p></div></div><div id="notifRows"><div class="muted">Memuat...</div></div></section></section>
-<aside><div id="affiliateCard" class="affiliate-card"><small>PROGRAM AFFILIATE</small><h2 id="affiliateTitle">Cek akses affiliate</h2><p id="affiliateText">Affiliate aktif setelah transaksi valid.</p><a class="btn btn-primary" href="affiliate.html">Lihat Affiliate →</a></div><div id="communityCard" class="card panel" style="margin-top:16px;display:none"><small>KOMUNITAS PELANGGAN</small><h3>Gabung Komunitas Solusi Genz</h3><p class="muted">Update, promo, edukasi, dan maintenance.</p><a id="communityBtn" class="btn btn-primary" target="_blank" rel="noopener">Gabung Grup WhatsApp</a></div></aside></div></main></div>
+<section id="notif" class="card panel" style="margin-top:24px"><div class="section-head"><div><h2>Notifikasi</h2><p class="muted">Update pembayaran, akses produk, dan affiliate.</p></div></div><div id="notifRows"><div class="muted">Memuat...</div></div></section>
+</section>
+<aside><div id="affiliateCard" class="affiliate-card"><small>PROGRAM AFFILIATE</small><h2 id="affiliateTitle">Cek akses affiliate</h2><p id="affiliateText">Affiliate aktif setelah transaksi valid.</p><a class="btn btn-primary" href="affiliate.html">Lihat Affiliate →</a></div><div id="communityCard" class="card panel" style="margin-top:16px;display:none"><small>KOMUNITAS PELANGGAN</small><h3>Gabung Komunitas Solusi Genz</h3><p class="muted">Update, promo, edukasi, dan maintenance.</p><a id="communityBtn" class="btn btn-primary" target="_blank" rel="noopener">Gabung Grup WhatsApp</a></div></aside>
+</div></main></div>
 <script src="supabase-config.js"></script><script src="sg-core.js"></script><script src="store-settings-v14.js"></script><script>
 (()=>{
 const $=id=>document.getElementById(id),money=n=>"Rp "+Number(n||0).toLocaleString("id-ID"),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const name=localStorage.getItem("sg_user_name")||"Genz",email=(localStorage.getItem("sg_user_email")||"").toLowerCase();
+let name=localStorage.getItem("sg_user_name")||"Genz",email=(localStorage.getItem("sg_user_email")||"").toLowerCase();
 $("nm").textContent=name;$("sideEmail").textContent=email;
 $("logout").onclick=()=>{SGCore.clearUser();location.replace("index.html")};
 
+function cleanProductDescription(raw){
+ const s=String(raw||"");
+ const m=s.match(/\[\[SGIMG:([\s\S]*?)\]\]/);
+ return {image:m?m[1]:"",description:s.replace(/\[\[SGIMG:[\s\S]*?\]\]\s*/,"").trim()};
+}
 function card(p){
+ const media=cleanProductDescription(p.description);
  const qs=new URLSearchParams({product:p.name,price:String(Number(p.price||0))});
- return `<article class="card product"><div class="product-visual catalog-visual"><span>${esc((p.category||"DIGITAL").toUpperCase())}</span></div><div class="product-body">${p.duration?`<span class="pill">${esc(p.duration)}</span>`:""}<h3>${esc(p.name)}</h3><p>${esc(p.description||"Produk digital Solusi Genz.")}</p><div class="product-bottom"><div><small>Harga</small><b>${money(p.price)}</b></div><a class="btn btn-primary checkout-link" href="checkout.html?${qs.toString()}">Pilih</a></div></div></article>`;
+ const visual=media.image?`<img src="${esc(media.image)}" alt="${esc(p.name)}">`:`<div class="product-placeholder">${esc((p.category||"DIGITAL").toUpperCase())}</div>`;
+ return `<article class="card product"><div class="product-visual">${visual}</div><div class="product-body">${p.duration?`<span class="pill">${esc(p.duration)}</span>`:""}<h3>${esc(p.name)}</h3><p>${esc(media.description||"Produk digital Solusi Genz.")}</p><div class="product-bottom"><div><small>Harga</small><b>${money(p.price)}</b></div><a class="btn btn-primary checkout-link" href="checkout.html?${qs.toString()}">Pilih</a></div></div></article>`;
 }
 async function loadProducts(){try{const rows=await SGCore.rpc("sg_catalog_list",{},"user");$("productGrid").innerHTML=rows?.length?rows.map(card).join(""):'<div class="card panel">Belum ada produk aktif.</div>'}catch(e){if(e.message!=="SESSION_EXPIRED")$("productGrid").innerHTML='<div class="card panel">Produk belum dapat dimuat. Coba Refresh.</div>'}}
-async function loadAffiliate(){try{const rows=await SGCore.rpc("sg_affiliate_eligibility",{p_email:email},"user"),s=rows?.[0];$("affiliateTitle").textContent=s?.eligible?"Affiliate sudah aktif":"Affiliate belum aktif";$("affiliateText").textContent=s?.eligible?"Kode referral dan saldo affiliate sudah dapat digunakan.":"Selesaikan minimal satu transaksi valid untuk mengaktifkan affiliate."}catch(_){}}
-async function loadNotif(){try{const rows=await SGCore.rpc("sg_my_notifications",{},"user")||[];const unread=rows.filter(n=>!n.read_at).length;$("notifBadge").textContent=unread;$("notifBadge").style.display=unread?"inline-flex":"none";$("notifRows").innerHTML=rows.length?rows.map(n=>`<article class="notif-item ${n.read_at?"":"unread"} ${n.category==="Berhasil"?"success-notif":""}"><div><span class="${n.category==="Berhasil"?"success-pill":"pill"}">${esc(n.category)}</span><b>${esc(n.title)}</b><p>${esc(n.message)}</p><small>${new Date(n.created_at).toLocaleString("id-ID")}</small></div>${n.action_url?`<a class="btn-mini" href="${esc(n.action_url)}">Buka</a>`:""}</article>`).join(""):'<div class="muted">Belum ada notifikasi.</div>'}catch(e){if(e.message!=="SESSION_EXPIRED")$("notifRows").innerHTML='<div class="muted">Notifikasi belum dapat dimuat.</div>'}}
+
+async function authUser(){
+ let token=SGCore.getAccess("user");
+ async function req(t){return fetch(window.SG_SUPABASE_URL+"/auth/v1/user",{headers:{"apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+t},cache:"no-store"})}
+ try{
+  let r=await req(token);
+  if(r.status===401&&await SGCore.refresh("user"))r=await req(SGCore.getAccess("user"));
+  if(!r.ok)return;
+  const u=await r.json(),m=u.user_metadata||{};
+  if(m.full_name){name=m.full_name;localStorage.setItem("sg_user_name",name);$("nm").textContent=name}
+  if(m.whatsapp)localStorage.setItem("sg_user_wa",m.whatsapp);
+  if(m.avatar_data_url)localStorage.setItem("sg_user_avatar",m.avatar_data_url);
+ }catch(_){}
+ const avatar=localStorage.getItem("sg_user_avatar")||"";
+ const initial=(name.trim()[0]||"G").toUpperCase();
+ $("topAvatar").innerHTML=avatar?`<img class="dashboard-avatar" src="${esc(avatar)}" alt="Foto profil">`:`<div class="dashboard-avatar-fallback">${esc(initial)}</div>`;
+}
+async function loadAffiliate(){
+ try{
+  const rows=await SGCore.rpc("sg_affiliate_eligibility",{p_email:email},"user"),s=rows?.[0];
+  $("affiliateTitle").textContent=s?.eligible?"Affiliate sudah aktif":"Affiliate belum aktif";
+  $("affiliateText").textContent=s?.eligible?"Kode referral dan saldo affiliate sudah dapat digunakan.":"Selesaikan minimal satu transaksi valid untuk mengaktifkan affiliate.";
+  if(s?.eligible){
+   const me=(await SGCore.rpc("sg_affiliate_me",{p_email:email},"user"))?.[0];
+   const total=Number(me?.total_commission||0);
+   $("commissionWelcomeValue").textContent=money(total);
+   $("commissionWelcome").classList.add("show");
+  }
+ }catch(_){}
+}
+function richMessage(text){
+ const safe=esc(text);
+ return safe.replace(/(Rp\s?[\d.]+)/gi,'<strong class="money-green">$1</strong>');
+}
+async function loadNotif(){
+ try{
+  const rows=await SGCore.rpc("sg_my_notifications",{},"user")||[];
+  const unread=rows.filter(n=>!n.read_at).length;$("notifBadge").textContent=unread;$("notifBadge").style.display=unread?"inline-flex":"none";
+  $("notifRows").innerHTML=rows.length?rows.map(n=>`<article class="notif-item ${n.read_at?"":"unread"} ${n.category==="Berhasil"?"success-notif":""}"><div><span class="${n.category==="Berhasil"?"success-pill":"pill"}">${esc(n.category)}</span><b>${esc(n.title)}</b><p>${richMessage(n.message)}</p><small>${new Date(n.created_at).toLocaleString("id-ID")}</small></div>${n.action_url?`<a class="btn-mini" href="${esc(n.action_url)}">Buka</a>`:""}</article>`).join(""):'<div class="muted">Belum ada notifikasi.</div>'
+ }catch(e){if(e.message!=="SESSION_EXPIRED")$("notifRows").innerHTML='<div class="muted">Notifikasi belum dapat dimuat.</div>'}
+}
 async function loadCommunity(){try{const rows=await SGCore.rpc("sg_customer_community",{},"user"),s=rows?.[0];if(s?.eligible&&s.whatsapp_group_url){$("communityCard").style.display="block";$("communityBtn").href=s.whatsapp_group_url}}catch(_){}}
 document.addEventListener("sg-settings-ready",ev=>{$("heroTitle").textContent=ev.detail.hero_title||$("heroTitle").textContent;$("heroSubtitle").textContent=ev.detail.hero_subtitle||$("heroSubtitle").textContent});
-if(window.sgLoadSettings)sgLoadSettings();loadProducts();loadAffiliate();loadNotif();loadCommunity();
+if(window.sgLoadSettings)sgLoadSettings();authUser();loadProducts();loadAffiliate();loadNotif();loadCommunity();
 })();
 </script></body></html>
