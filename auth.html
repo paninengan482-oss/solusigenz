@@ -1,23 +1,53 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><script>
-(function(){
-  var h=location.hash||"", q=location.search||"";
-  var recovery=/type=recovery/i.test(h+q);
-  var hasToken=/access_token=|refresh_token=|token_hash=/i.test(h+q);
-  if(recovery||hasToken){
-    location.replace("reset-password.html"+q+h);
-  }
-})();
-</script><meta name="viewport" content="width=device-width,initial-scale=1"><title>Masuk — Solusi Genz</title><link rel="stylesheet" href="revamp.css"></head><body><main class="auth-wrap"><section class="card auth-card"><a href="index.html"><img class="auth-logo" src="solusi-genz-v2.svg" alt="Solusi Genz"></a><span class="badge">AKUN SOLUSI GENZ</span><h1 id="title">Selamat datang kembali.</h1><p class="muted" id="subtitle">Masuk dengan email dan password. Akun Admin akan diarahkan otomatis ke Dashboard Admin.</p><div id="nameField" class="field" style="display:none"><label>Nama lengkap</label><input id="name" autocomplete="name"></div><div class="field" style="margin-top:14px"><label>Email / ID</label><input id="email" type="text" autocomplete="username" placeholder="Email atau ID"></div><div class="field" style="margin-top:14px"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button id="submit" class="btn btn-primary" style="width:100%;margin-top:18px">Masuk</button><button id="forgotBtn" class="btn btn-ghost" type="button" style="width:100%;margin-top:10px">Lupa / Reset Password</button><div id="msg" class="notice" style="display:none;margin-top:14px"></div><p class="muted" id="switch">Belum punya akun? <a href="auth.html?mode=register"><b>Buat Akun</b></a></p></section></main><script src="supabase-config.js"></script><script>
-const $=id=>document.getElementById(id),titleEl=$("title"),subtitleEl=$("subtitle"),nameFieldEl=$("nameField"),nameEl=$("name"),emailEl=$("email"),passwordEl=$("password"),submitEl=$("submit"),forgotBtn=$("forgotBtn"),msgEl=$("msg"),switchEl=$("switch");
-const ADMIN_ALIAS="Adminsolusi123";
-const ADMIN_EMAIL="paninengan482@gmail.com";
-const q=new URLSearchParams(location.search),reg=q.get("mode")==="register",urlRef=(q.get("ref")||"").trim().toUpperCase(),savedRef=(localStorage.getItem("sg_ref_code")||"").trim().toUpperCase(),ref=urlRef||savedRef;if(ref)localStorage.setItem("sg_ref_code",ref);
-if(reg){titleEl.textContent="Buat akun Solusi Genz.";subtitleEl.textContent=ref?"Daftar melalui link referral.":"Daftar sekali untuk belanja, melihat pesanan, affiliate, dan mengatur akun.";nameFieldEl.style.display="flex";submitEl.textContent="Buat Akun";forgotBtn.style.display="none";switchEl.innerHTML='Sudah punya akun? <a href="auth.html'+(ref?'?ref='+encodeURIComponent(ref):'')+'"><b>Masuk</b></a>'}
-async function req(path,body,token=""){const headers={"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY};if(token)headers.Authorization="Bearer "+token;return fetch(window.SG_SUPABASE_URL+path,{method:"POST",headers,body:JSON.stringify(body)})}
-function show(s,ok=false){msgEl.textContent=s;msgEl.style.display="block";msgEl.style.borderColor=ok?"#86efac":""}
-async function attachReferral(em,userId,token,code=""){const effective=(code||ref||"").trim().toUpperCase();if(!effective||!token)return false;try{const r=await req("/rest/v1/rpc/sg_affiliate_attach_referral",{p_buyer_email:em,p_buyer_user_id:userId||null,p_referral_code:effective},token);if(r.ok){localStorage.setItem("sg_ref_attached",effective);localStorage.setItem("sg_ref_code",effective);return true}}catch(_){ }return false}
-async function isAdmin(token){try{const r=await req("/rest/v1/rpc/sg_admin_list_orders",{},token);return r.ok}catch(_){return false}}
-forgotBtn.onclick=async()=>{const em=emailEl.value.trim();if(!em){show("Masukkan email akun terlebih dahulu. Reset password menggunakan email akun, bukan ID.");emailEl.focus();return}forgotBtn.disabled=true;forgotBtn.textContent="Mengirim link reset...";try{const redirect=location.origin+"/reset-password.html";const r=await req("/auth/v1/recover",{email:em,redirect_to:redirect});if(!r.ok)throw Error(await r.text());show("Link reset password sudah dikirim ke email. Buka email terbaru dari Solusi Genz/Supabase.",true)}catch(e){show("Link reset belum dapat dikirim. Pastikan email benar dan Redirect URL Supabase sudah mengizinkan halaman reset-password.html.")}finally{forgotBtn.disabled=false;forgotBtn.textContent="Lupa / Reset Password"}};
-submitEl.onclick=async()=>{const loginId=emailEl.value.trim(),pw=passwordEl.value,n=nameEl.value.trim();const isAlias=!reg&&loginId.toLowerCase()===ADMIN_ALIAS.toLowerCase();const em=isAlias?ADMIN_EMAIL:loginId;if(!em||pw.length<6||(reg&&!n)){show("Lengkapi data. Password minimal 6 karakter.");return}submitEl.disabled=true;submitEl.textContent="Memproses...";try{const body=reg?{email:em,password:pw,data:{full_name:n,referral_code:ref||null}}:{email:em,password:pw};const r=await req(reg?"/auth/v1/signup":"/auth/v1/token?grant_type=password",body);const t=await r.text();if(!r.ok)throw Error(t);const d=JSON.parse(t);if(d.access_token){if(!reg && await isAdmin(d.access_token)){sessionStorage.setItem("sg_admin_token",d.access_token);sessionStorage.setItem("sg_admin_email",em);localStorage.removeItem("sg_user_token");location.replace("admin.html");return}localStorage.setItem("sg_user_token",d.access_token);localStorage.setItem("sg_user_email",em);localStorage.setItem("sg_user_name",reg?n:(d.user?.user_metadata?.full_name||em.split("@")[0]));localStorage.setItem("sg_user_id",d.user?.id||"");const metaRef=(d.user?.user_metadata?.referral_code||ref||"").trim().toUpperCase();if(metaRef)localStorage.setItem("sg_ref_code",metaRef);await attachReferral(em,d.user?.id||"",d.access_token,metaRef);try{await req("/rest/v1/rpc/sg_affiliate_sync_self",{p_email:em},d.access_token)}catch(_){ }location.replace("shop.html")}else show("Akun dibuat. Silakan masuk menggunakan email dan password yang didaftarkan.",true)}catch(e){show(reg?"Pendaftaran belum berhasil. Email mungkin sudah terdaftar.":"Email/ID atau password salah.")}finally{submitEl.disabled=false;submitEl.textContent=reg?"Buat Akun":"Masuk"}};
-passwordEl.addEventListener("keydown",e=>{if(e.key==="Enter")submitEl.click()});
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Masuk — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="v16-core.css"></head><body>
+<main class="auth-wrap"><section class="card auth-card"><a href="index.html"><img class="auth-logo" src="solusi-genz-v2.svg" alt="Solusi Genz"></a><span class="badge">AKUN SOLUSI GENZ</span><h1 id="title">Selamat datang kembali.</h1><p class="muted" id="subtitle">Masuk menggunakan Email / ID dan password.</p>
+<div id="nameField" class="field" style="display:none"><label>Nama lengkap</label><input id="name"></div>
+<div class="field" style="margin-top:14px"><label>Email / ID</label><input id="email" type="text" autocomplete="username" placeholder="Email atau ID"></div>
+<div class="field" style="margin-top:14px"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+<button id="submit" class="btn btn-primary" style="width:100%;margin-top:18px">Masuk</button>
+<button id="forgotBtn" class="btn btn-ghost" type="button" style="width:100%;margin-top:10px">Lupa / Reset Password</button>
+<div id="msg" class="notice" style="display:none;margin-top:14px"></div><p class="muted" id="switch">Belum punya akun? <a href="auth.html?mode=register"><b>Buat Akun</b></a></p></section></main>
+<script src="supabase-config.js"></script><script src="sg-core.js"></script><script>
+const $=id=>document.getElementById(id);
+const ADMIN_ALIAS="Adminsolusi123", ADMIN_EMAIL="paninengan482@gmail.com";
+const q=new URLSearchParams(location.search), reg=q.get("mode")==="register";
+if(q.get("expired")==="1"){ show("Sesi login berakhir. Silakan masuk kembali."); }
+if(reg){$("title").textContent="Buat akun Solusi Genz.";$("subtitle").textContent="Daftar sekali untuk belanja dan melihat pesanan.";$("nameField").style.display="flex";$("submit").textContent="Buat Akun";$("forgotBtn").style.display="none";$("switch").innerHTML='Sudah punya akun? <a href="auth.html"><b>Masuk</b></a>'}
+function show(s,ok=false){const m=$("msg");m.textContent=s;m.style.display="block";m.style.borderColor=ok?"#86efac":""}
+async function authReq(path,body){
+ const r=await fetch(window.SG_SUPABASE_URL+path,{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},body:JSON.stringify(body)});
+ const raw=await r.text(); if(!r.ok) throw new Error(raw); return raw?JSON.parse(raw):{};
+}
+$("submit").onclick=async()=>{
+ const loginId=$("email").value.trim(), pw=$("password").value, n=$("name").value.trim();
+ if(!loginId||pw.length<6||(reg&&!n)){show("Lengkapi data. Password minimal 6 karakter.");return}
+ $("submit").disabled=true;$("submit").textContent="Memproses...";
+ try{
+   if(reg){
+     const d=await authReq("/auth/v1/signup",{email:loginId,password:pw,data:{full_name:n}});
+     if(d.access_token){localStorage.setItem("sg_user_token",d.access_token);localStorage.setItem("sg_user_email",loginId);localStorage.setItem("sg_user_name",n);localStorage.setItem("sg_user_id",d.user?.id||"");location.replace("shop.html");return}
+     show("Akun dibuat. Silakan masuk.",true);
+   }else{
+     const isAlias=loginId.toLowerCase()===ADMIN_ALIAS.toLowerCase();
+     const em=isAlias?ADMIN_EMAIL:loginId;
+     const d=await authReq("/auth/v1/token?grant_type=password",{email:em,password:pw});
+     if(isAlias){
+       await SGCore.rpc("sg_admin_list_orders",{},d.access_token,"admin");
+       SGCore.clearUser(); sessionStorage.setItem("sg_admin_token",d.access_token);sessionStorage.setItem("sg_admin_email",em);location.replace("admin.html");return;
+     }
+     localStorage.setItem("sg_user_token",d.access_token);localStorage.setItem("sg_user_email",em);
+     localStorage.setItem("sg_user_name",d.user?.user_metadata?.full_name||em.split("@")[0]);localStorage.setItem("sg_user_id",d.user?.id||"");
+     location.replace("shop.html");
+   }
+ }catch(e){show(reg?"Pendaftaran belum berhasil. Email mungkin sudah terdaftar.":"Email/ID atau password salah.");}
+ finally{$("submit").disabled=false;$("submit").textContent=reg?"Buat Akun":"Masuk"}
+};
+$("forgotBtn").onclick=async()=>{
+ const em=$("email").value.trim();
+ if(!em||!em.includes("@")){show("Masukkan email akun untuk reset password. ID Admin tidak bisa dipakai untuk reset.");return}
+ $("forgotBtn").disabled=true;$("forgotBtn").textContent="Mengirim...";
+ try{await authReq("/auth/v1/recover",{email:em,redirect_to:location.origin+"/reset-password.html"});show("Email reset terkirim. Buka email terbaru.",true)}
+ catch(e){show("Reset belum berhasil dikirim.");}
+ finally{$("forgotBtn").disabled=false;$("forgotBtn").textContent="Lupa / Reset Password"}
+};
+$("password").addEventListener("keydown",e=>{if(e.key==="Enter")$("submit").click()});
 </script></body></html>

@@ -1,0 +1,9 @@
+/* V16 stability layer */
+button:disabled{opacity:.55;cursor:not-allowed}
+.notice{border-radius:12px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.actions button,.btn-mini{cursor:pointer}
+.table td,.table th{vertical-align:middle}
+.account-number{font-size:1.25rem;font-weight:800;letter-spacing:.04em;margin:.35rem 0}
+.payment-panel,.access-box{margin-top:18px;padding:16px;border:1px solid rgba(127,127,127,.2);border-radius:16px}
+@media(max-width:800px){.app-shell{display:block}.sidebar{position:relative;width:auto}.main{padding:16px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
