@@ -74,7 +74,7 @@ if(!sessionStorage.getItem("sg_admin_token")) location.replace("auth.html");
 
     <section id="withdrawals" class="card panel admin-section-anchor">
       <h3>Permintaan Pencairan</h3>
-      <p class="muted">Transfer dilakukan manual. Upload bukti transfer sebelum menandai pencairan selesai.</p>
+      <p class="muted">Transfer dilakukan manual. Setelah transfer, cukup tandai pencairan sebagai dibayar. Affiliate akan menerima notifikasi otomatis.</p>
       <div class="table-wrap">
         <table class="table">
           <thead><tr><th>ID</th><th>Affiliate</th><th>Nominal</th><th>Tujuan</th><th>Status</th><th>Aksi</th></tr></thead>
@@ -316,18 +316,27 @@ function pickImageData(){
 }
 
 async function finishWd(id,paid){
-  let note="",proof="";
+  let note="";
   if(paid){
-    proof=await pickImageData();if(!proof)return;
-    note=prompt("Catatan transfer (opsional):","")||"";
+    if(!confirm("Tandai pencairan ini sebagai sudah dibayar?")) return;
+    note="Pencairan berhasil dibayarkan.";
   }else{
     note=prompt("Alasan penolakan:","Data rekening / e-wallet perlu diperiksa kembali.")||"";
     if(!note)return;
   }
   try{
-    await rpc("sg_admin_finish_withdraw",{p_id:id,p_paid:paid,p_note:note,p_proof_data_url:proof});
-    await loadWd();await loadAffiliates();
-  }catch(e){if(!isSessionExpired(e))alert("Pencairan gagal diperbarui.");}
+    await rpc("sg_admin_finish_withdraw",{
+      p_id:id,
+      p_paid:paid,
+      p_note:note,
+      p_proof_data_url:""
+    });
+    alert(paid ? "Pencairan berhasil ditandai sebagai dibayar." : "Pencairan ditolak.");
+    await loadWd();
+    await loadAffiliates();
+  }catch(e){
+    if(!isSessionExpired(e)) alert("Pencairan gagal diperbarui.");
+  }
 }
 
 async function loadWd(){
@@ -339,7 +348,7 @@ async function loadWd(){
       <tr><td>#${w.id}</td><td>${esc(w.affiliate_email)}</td><td>${money(w.amount)}</td>
       <td>${esc(w.method)}<br><small>${esc(w.account_name)} · ${esc(w.account_number)}</small></td>
       <td><span class="pill">${esc(w.status)}</span></td>
-      <td>${w.status==="diproses"?`<div class="actions"><button class="wd-pay" data-id="${w.id}">Sudah Transfer</button><button class="wd-reject danger" data-id="${w.id}">Tolak</button></div>`:w.proof_data_url?`<button class="btn-mini wd-proof" data-id="${w.id}">Bukti</button>`:"-"}</td></tr>`).join(""):'<tr><td colspan="6">Belum ada permintaan pencairan.</td></tr>';
+      <td>${w.status==="diproses"?`<div class="actions"><button class="wd-pay" data-id="${w.id}">Tandai Dibayar</button><button class="wd-reject danger" data-id="${w.id}">Tolak</button></div>`:w.proof_data_url?`<button class="btn-mini wd-proof" data-id="${w.id}">Bukti</button>`:"-"}</td></tr>`).join(""):'<tr><td colspan="6">Belum ada permintaan pencairan.</td></tr>';
     document.querySelectorAll(".wd-pay").forEach(b=>b.onclick=()=>finishWd(Number(b.dataset.id),true));
     document.querySelectorAll(".wd-reject").forEach(b=>b.onclick=()=>finishWd(Number(b.dataset.id),false));
     document.querySelectorAll(".wd-proof").forEach(b=>{b.onclick=()=>{const w=allWd.find(x=>Number(x.id)===Number(b.dataset.id));showProof(w?.proof_data_url||"")}});

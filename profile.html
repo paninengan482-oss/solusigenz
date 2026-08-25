@@ -1,36 +1,6 @@
 <!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Profil — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="v17-core.css"></head><body>
 <script>if(!localStorage.getItem("sg_user_token"))location.replace("auth.html")</script>
-<main class="auth-wrap"><section class="card auth-card profile-shell"><a href="shop.html"><img class="auth-logo" src="solusi-genz-v2.svg"></a><span class="badge">PROFIL PELANGGAN</span><h1>Profil Saya</h1><p class="muted">Foto dan identitas ini dapat kamu ubah kapan saja.</p>
-<div class="profile-avatar-wrap"><div id="avatarBox"></div><div class="profile-photo-actions"><input id="avatarInput" type="file" accept="image/*" style="display:none"><button id="chooseAvatar" class="btn btn-ghost" type="button">Ganti Foto Profil</button><button id="removeAvatar" class="btn btn-ghost" type="button">Hapus Foto</button><small>Foto akan dikompres otomatis agar tetap ringan.</small></div></div>
-<div class="field"><label>Nama</label><input id="pname"></div><div class="field" style="margin-top:12px"><label>Email</label><input id="pemail" disabled></div><div class="field" style="margin-top:12px"><label>WhatsApp</label><input id="pwa" inputmode="tel"></div>
-<button id="save" class="btn btn-primary" style="width:100%;margin-top:18px">Simpan Profil</button><a href="shop.html" class="btn btn-ghost" style="width:100%;margin-top:10px">Kembali ke Dashboard</a><button id="logout" class="btn btn-ghost" style="width:100%;margin-top:10px">Keluar</button><p id="msg" class="muted"></p></section></main>
+<main class="auth-wrap"><section class="card auth-card"><a href="shop.html"><img class="auth-logo" src="solusi-genz-v2.svg"></a><h1>Profil Pelanggan</h1><div class="field"><label>Nama</label><input id="pname"></div><div class="field" style="margin-top:12px"><label>Email</label><input id="pemail" disabled></div><div class="field" style="margin-top:12px"><label>WhatsApp</label><input id="pwa" inputmode="tel"></div><button id="save" class="btn btn-primary" style="width:100%;margin-top:18px">Simpan Profil</button><button id="logout" class="btn btn-ghost" style="width:100%;margin-top:10px">Keluar</button><p id="msg" class="muted"></p></section></main>
 <script src="supabase-config.js"></script><script src="sg-core.js"></script><script>
-(()=>{
-const $=id=>document.getElementById(id);let avatar=localStorage.getItem("sg_user_avatar")||"";
-$("pname").value=localStorage.getItem("sg_user_name")||"";$("pemail").value=localStorage.getItem("sg_user_email")||"";$("pwa").value=localStorage.getItem("sg_user_wa")||"";
-function renderAvatar(){const initial=($("pname").value.trim()[0]||"G").toUpperCase();$("avatarBox").innerHTML=avatar?`<img class="profile-avatar" src="${avatar}" alt="Foto profil">`:`<div class="profile-avatar-placeholder">${initial}</div>`}
-function compress(file){return new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const max=512,s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const ctx=c.getContext("2d");ctx.fillStyle="#111";ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL("image/jpeg",.78))};im.onerror=reject;im.src=fr.result};fr.onerror=reject;fr.readAsDataURL(file)})}
-async function updateMeta(meta){
- async function req(token){return fetch(window.SG_SUPABASE_URL+"/auth/v1/user",{method:"PUT",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+token},body:JSON.stringify({data:meta})})}
- let r=await req(SGCore.getAccess("user"));
- if(r.status===401&&await SGCore.refresh("user"))r=await req(SGCore.getAccess("user"));
- if(!r.ok)throw new Error(await r.text());
- return r.json();
-}
-$("chooseAvatar").onclick=()=>$("avatarInput").click();
-$("avatarInput").onchange=async()=>{const f=$("avatarInput").files?.[0];if(!f)return;$("msg").textContent="Menyiapkan foto...";try{avatar=await compress(f);renderAvatar();$("msg").textContent="Foto siap. Klik Simpan Profil."}catch(e){$("msg").textContent="Foto belum dapat diproses."}};
-$("removeAvatar").onclick=()=>{avatar="";renderAvatar();$("msg").textContent="Foto akan dihapus setelah Simpan Profil."};
-$("pname").oninput=()=>{if(!avatar)renderAvatar()};
-$("save").onclick=async()=>{
- const n=$("pname").value.trim()||"Genz",w=$("pwa").value.trim();$("save").disabled=true;$("msg").textContent="Menyimpan...";
- try{
-  await updateMeta({full_name:n,whatsapp:w,avatar_data_url:avatar});
-  localStorage.setItem("sg_user_name",n);localStorage.setItem("sg_user_wa",w);
-  if(avatar)localStorage.setItem("sg_user_avatar",avatar);else localStorage.removeItem("sg_user_avatar");
-  $("msg").innerHTML='<span class="money-green">Profil berhasil disimpan.</span>';
- }catch(e){console.error(e);$("msg").textContent="Profil belum berhasil disimpan. Coba login ulang lalu simpan kembali."}
- finally{$("save").disabled=false}
-};
-$("logout").onclick=()=>{SGCore.clearUser();location.replace("index.html")};renderAvatar();
-})();
+(()=>{const $=id=>document.getElementById(id);$("pname").value=localStorage.getItem("sg_user_name")||"";$("pemail").value=localStorage.getItem("sg_user_email")||"";$("pwa").value=localStorage.getItem("sg_user_wa")||"";$("save").onclick=()=>{localStorage.setItem("sg_user_name",$("pname").value.trim()||"Genz");localStorage.setItem("sg_user_wa",$("pwa").value.trim());$("msg").textContent="Profil berhasil disimpan."};$("logout").onclick=()=>{SGCore.clearUser();location.replace("index.html")}})();
 </script></body></html>
