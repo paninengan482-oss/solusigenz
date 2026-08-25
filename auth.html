@@ -8,46 +8,134 @@
 <div id="msg" class="notice" style="display:none;margin-top:14px"></div><p class="muted" id="switch">Belum punya akun? <a href="auth.html?mode=register"><b>Buat Akun</b></a></p></section></main>
 <script src="supabase-config.js"></script><script src="sg-core.js"></script><script>
 const $=id=>document.getElementById(id);
-const ADMIN_ALIAS="Adminsolusi123", ADMIN_EMAIL="paninengan482@gmail.com";
+const ADMIN_ALIAS="Adminsolusi123";
+const ADMIN_EMAIL="paninengan482@gmail.com";
 const q=new URLSearchParams(location.search), reg=q.get("mode")==="register";
-if(q.get("expired")==="1"){ show("Sesi login berakhir. Silakan masuk kembali."); }
-if(reg){$("title").textContent="Buat akun Solusi Genz.";$("subtitle").textContent="Daftar sekali untuk belanja dan melihat pesanan.";$("nameField").style.display="flex";$("submit").textContent="Buat Akun";$("forgotBtn").style.display="none";$("switch").innerHTML='Sudah punya akun? <a href="auth.html"><b>Masuk</b></a>'}
-function show(s,ok=false){const m=$("msg");m.textContent=s;m.style.display="block";m.style.borderColor=ok?"#86efac":""}
-async function authReq(path,body){
- const r=await fetch(window.SG_SUPABASE_URL+path,{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},body:JSON.stringify(body)});
- const raw=await r.text(); if(!r.ok) throw new Error(raw); return raw?JSON.parse(raw):{};
+
+function show(s,ok=false){
+  const m=$("msg");
+  m.textContent=s;
+  m.style.display="block";
+  m.style.borderColor=ok?"#86efac":"";
 }
+
+if(q.get("expired")==="1") show("Sesi login berakhir. Silakan masuk kembali.");
+
+if(reg){
+  $("title").textContent="Buat akun Solusi Genz.";
+  $("subtitle").textContent="Daftar sekali untuk belanja dan melihat pesanan.";
+  $("nameField").style.display="flex";
+  $("submit").textContent="Buat Akun";
+  $("forgotBtn").style.display="none";
+  $("switch").innerHTML='Sudah punya akun? <a href="auth.html"><b>Masuk</b></a>';
+}
+
+async function authReq(path,body){
+  const r=await fetch(window.SG_SUPABASE_URL+path,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},
+    body:JSON.stringify(body)
+  });
+  const raw=await r.text();
+  if(!r.ok) throw new Error(raw);
+  return raw?JSON.parse(raw):{};
+}
+
 $("submit").onclick=async()=>{
- const loginId=$("email").value.trim(), pw=$("password").value, n=$("name").value.trim();
- if(!loginId||pw.length<6||(reg&&!n)){show("Lengkapi data. Password minimal 6 karakter.");return}
- $("submit").disabled=true;$("submit").textContent="Memproses...";
- try{
-   if(reg){
-     const d=await authReq("/auth/v1/signup",{email:loginId,password:pw,data:{full_name:n}});
-     if(d.access_token){localStorage.setItem("sg_user_token",d.access_token);localStorage.setItem("sg_user_email",loginId);localStorage.setItem("sg_user_name",n);localStorage.setItem("sg_user_id",d.user?.id||"");location.replace("shop.html");return}
-     show("Akun dibuat. Silakan masuk.",true);
-   }else{
-     const isAlias=loginId.toLowerCase()===ADMIN_ALIAS.toLowerCase();
-     const em=isAlias?ADMIN_EMAIL:loginId;
-     const d=await authReq("/auth/v1/token?grant_type=password",{email:em,password:pw});
-     if(isAlias){
-       await SGCore.rpc("sg_admin_list_orders",{},d.access_token,"admin");
-       SGCore.clearUser(); sessionStorage.setItem("sg_admin_token",d.access_token);sessionStorage.setItem("sg_admin_email",em);location.replace("admin.html");return;
-     }
-     localStorage.setItem("sg_user_token",d.access_token);localStorage.setItem("sg_user_email",em);
-     localStorage.setItem("sg_user_name",d.user?.user_metadata?.full_name||em.split("@")[0]);localStorage.setItem("sg_user_id",d.user?.id||"");
-     location.replace("shop.html");
-   }
- }catch(e){show(reg?"Pendaftaran belum berhasil. Email mungkin sudah terdaftar.":"Email/ID atau password salah.");}
- finally{$("submit").disabled=false;$("submit").textContent=reg?"Buat Akun":"Masuk"}
+  const loginId=$("email").value.trim();
+  const pw=$("password").value;
+  const n=$("name").value.trim();
+
+  if(!loginId||pw.length<6||(reg&&!n)){
+    show("Lengkapi data. Password minimal 6 karakter.");
+    return;
+  }
+
+  $("submit").disabled=true;
+  $("submit").textContent="Memproses...";
+
+  try{
+    if(reg){
+      const d=await authReq("/auth/v1/signup",{email:loginId,password:pw,data:{full_name:n}});
+      if(d.access_token){
+        localStorage.setItem("sg_user_token",d.access_token);
+        localStorage.setItem("sg_user_email",loginId);
+        localStorage.setItem("sg_user_name",n);
+        localStorage.setItem("sg_user_id",d.user?.id||"");
+        location.replace("shop.html");
+        return;
+      }
+      show("Akun dibuat. Silakan masuk.",true);
+    }else{
+      const lower=loginId.toLowerCase();
+      const isAdminLogin =
+        lower===ADMIN_ALIAS.toLowerCase() ||
+        lower===ADMIN_EMAIL.toLowerCase();
+
+      const em = lower===ADMIN_ALIAS.toLowerCase() ? ADMIN_EMAIL : loginId;
+
+      const d=await authReq("/auth/v1/token?grant_type=password",{email:em,password:pw});
+
+      if(isAdminLogin){
+        await SGCore.rpc("sg_admin_list_orders",{},d.access_token,"admin");
+
+        SGCore.clearUser();
+        sessionStorage.setItem("sg_admin_token",d.access_token);
+        sessionStorage.setItem("sg_admin_email",ADMIN_EMAIL);
+
+        location.replace("admin.html");
+        return;
+      }
+
+      localStorage.setItem("sg_user_token",d.access_token);
+      localStorage.setItem("sg_user_email",em);
+      localStorage.setItem("sg_user_name",d.user?.user_metadata?.full_name||em.split("@")[0]);
+      localStorage.setItem("sg_user_id",d.user?.id||"");
+
+      location.replace("shop.html");
+    }
+  }catch(e){
+    console.error(e);
+    show(reg
+      ?"Pendaftaran belum berhasil. Email mungkin sudah terdaftar."
+      :"Email/ID atau password salah, atau akun Admin belum diberi hak Admin."
+    );
+  }finally{
+    $("submit").disabled=false;
+    $("submit").textContent=reg?"Buat Akun":"Masuk";
+  }
 };
+
 $("forgotBtn").onclick=async()=>{
- const em=$("email").value.trim();
- if(!em||!em.includes("@")){show("Masukkan email akun untuk reset password. ID Admin tidak bisa dipakai untuk reset.");return}
- $("forgotBtn").disabled=true;$("forgotBtn").textContent="Mengirim...";
- try{await authReq("/auth/v1/recover",{email:em,redirect_to:location.origin+"/reset-password.html"});show("Email reset terkirim. Buka email terbaru.",true)}
- catch(e){show("Reset belum berhasil dikirim.");}
- finally{$("forgotBtn").disabled=false;$("forgotBtn").textContent="Lupa / Reset Password"}
+  let em=$("email").value.trim();
+
+  if(em.toLowerCase()===ADMIN_ALIAS.toLowerCase()){
+    em=ADMIN_EMAIL;
+  }
+
+  if(!em||!em.includes("@")){
+    show("Masukkan email akun untuk reset password.");
+    return;
+  }
+
+  $("forgotBtn").disabled=true;
+  $("forgotBtn").textContent="Mengirim...";
+
+  try{
+    await authReq("/auth/v1/recover",{
+      email:em,
+      redirect_to:location.origin+"/reset-password.html"
+    });
+    show("Email reset terkirim. Buka email terbaru.",true);
+  }catch(e){
+    show("Reset belum berhasil dikirim.");
+  }finally{
+    $("forgotBtn").disabled=false;
+    $("forgotBtn").textContent="Lupa / Reset Password";
+  }
 };
-$("password").addEventListener("keydown",e=>{if(e.key==="Enter")$("submit").click()});
+
+$("password").addEventListener("keydown",e=>{
+  if(e.key==="Enter") $("submit").click();
+});
 </script></body></html>
