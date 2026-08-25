@@ -6,10 +6,22 @@
 <section class="stats" style="margin-top:16px"><div class="card stat"><small>Total Referral</small><h3 id="refCount">0</h3></div><div class="card stat"><small>Sudah Belanja</small><h3 id="buyerCount">0</h3></div><div class="card stat"><small>Komisi Tertahan</small><h3 id="held">Rp 0</h3></div><div class="card stat"><small>Saldo Tersedia</small><h3 id="available">Rp 0</h3></div><div class="card stat"><small>Dalam Proses</small><h3 id="processing">Rp 0</h3></div><div class="card stat"><small>Total Komisi</small><h3 id="total">Rp 0</h3></div></section>
 <section class="card panel"><h3>Ajukan Pencairan</h3><form id="wdForm" class="product-admin-form"><div class="field"><label>Nominal</label><input id="wdAmount" type="number" min="0"></div><div class="field"><label>Metode</label><select id="wdMethod"><option>Bank Mandiri</option><option>DANA</option><option>GoPay</option><option>OVO</option><option>ShopeePay</option></select></div><div class="field"><label>Nama Pemilik</label><input id="wdName"></div><div class="field"><label>Nomor Rekening / E-wallet</label><input id="wdNumber"></div><div class="toolbar full"><button class="btn btn-primary" type="submit">Ajukan Pencairan</button></div></form><div id="wdMsg" class="notice" style="display:none"></div></section>
 <section class="card panel"><h3>Riwayat Komisi</h3><div class="table-wrap"><table class="table"><thead><tr><th>Invoice</th><th>Referral</th><th>Nilai Order</th><th>Komisi</th><th>Status</th><th>Tanggal</th></tr></thead><tbody id="commissionRows"></tbody></table></div></section>
-<section class="card panel"><h3>Riwayat Pencairan</h3><div class="table-wrap"><table class="table"><thead><tr><th>ID</th><th>Nominal</th><th>Metode</th><th>Status</th><th>Catatan</th><th>Bukti</th></tr></thead><tbody id="wdRows"></tbody></table></div></section></div></main></div>
+<section class="card panel"><h3>Riwayat Pencairan</h3><div class="table-wrap"><table class="table"><thead><tr><th>ID</th><th>Nominal</th><th>Metode</th><th>Status</th><th>Catatan</th><th>Pembayaran</th></tr></thead><tbody id="wdRows"></tbody></table></div></section></div></main></div>
 <script src="supabase-config.js"></script><script src="sg-core.js"></script><script>
 (()=>{
 const $=id=>document.getElementById(id),email=(localStorage.getItem("sg_user_email")||"").toLowerCase(),money=n=>"Rp "+Number(n||0).toLocaleString("id-ID"),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function paymentBadge(status){
+  const s=String(status||"").toLowerCase();
+  if(s==="dibayar"){
+    return '<span style="display:inline-flex;align-items:center;gap:8px;color:#2563eb;font-weight:800;white-space:nowrap"><span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#2563eb;color:#fff;font-size:15px;font-weight:900">✓</span>Pembayaran Berhasil</span>';
+  }
+  if(s==="ditolak"){
+    return '<span style="display:inline-flex;align-items:center;gap:7px;color:#b91c1c;font-weight:800"><span style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fee2e2;color:#b91c1c">×</span>Ditolak</span>';
+  }
+  return '<span style="display:inline-flex;align-items:center;gap:7px;color:#64748b;font-weight:700"><span style="width:8px;height:8px;border-radius:50%;background:#94a3b8"></span>Menunggu</span>';
+}
+
 async function load(){
  try{
   const elig=(await SGCore.rpc("sg_affiliate_eligibility",{p_email:email},"user"))?.[0];
@@ -18,14 +30,38 @@ async function load(){
   const me=(await SGCore.rpc("sg_affiliate_me",{p_email:email},"user"))?.[0];
   $("refLink").value=location.origin+"/auth.html?mode=register&ref="+encodeURIComponent(me?.referral_code||"");
   $("refCount").textContent=me?.total_referrals||0;$("buyerCount").textContent=me?.total_buyers||0;$("held").textContent=money(me?.held_commission);$("available").textContent=money(me?.available_commission);$("processing").textContent=money(me?.processing_commission);$("total").textContent=money(me?.total_commission);
+
   const cr=await SGCore.rpc("sg_affiliate_commissions",{p_email:email},"user")||[];
   $("commissionRows").innerHTML=cr.length?cr.map(r=>`<tr><td>${esc(r.invoice)}</td><td>${esc(r.buyer_email)}</td><td>${money(r.order_amount)}</td><td>${money(r.commission_amount)}</td><td><span class="pill">${esc(r.status)}</span></td><td>${new Date(r.created_at).toLocaleDateString("id-ID")}</td></tr>`).join(""):'<tr><td colspan="6">Belum ada komisi.</td></tr>';
+
   const wr=await SGCore.rpc("sg_my_withdrawals",{},"user")||[];
-  $("wdRows").innerHTML=wr.length?wr.map(w=>`<tr><td>#${w.id}</td><td>${money(w.amount)}</td><td>${esc(w.method)}<br><small>${esc(w.account_name)} · ${esc(w.account_number)}</small></td><td><span class="pill">${esc(w.status)}</span></td><td>${esc(w.admin_note||"-")}</td><td>${w.proof_data_url?`<a class="btn-mini" href="${esc(w.proof_data_url)}" target="_blank">Lihat Bukti</a>`:"-"}</td></tr>`).join(""):'<tr><td colspan="6">Belum ada pencairan.</td></tr>';
- }catch(e){console.error(e);if(e.message!=="SESSION_EXPIRED"){$("locked").style.display="block";$("content").style.display="none";$("locked").innerHTML='<span class="badge">AFFILIATE</span><h2>Affiliate belum dapat dimuat.</h2><p class="muted">Coba Refresh halaman.</p>'}}
+  $("wdRows").innerHTML=wr.length?wr.map(w=>`<tr><td>#${w.id}</td><td>${money(w.amount)}</td><td>${esc(w.method)}<br><small>${esc(w.account_name)} · ${esc(w.account_number)}</small></td><td><span class="pill">${esc(w.status)}</span></td><td>${esc(w.admin_note||"-")}</td><td>${paymentBadge(w.status)}</td></tr>`).join(""):'<tr><td colspan="6">Belum ada pencairan.</td></tr>';
+ }catch(e){
+  console.error(e);
+  if(e.message!=="SESSION_EXPIRED"){
+    $("locked").style.display="block";
+    $("content").style.display="none";
+    $("locked").innerHTML='<span class="badge">AFFILIATE</span><h2>Affiliate belum dapat dimuat.</h2><p class="muted">Coba Refresh halaman.</p>';
+  }
+ }
 }
+
 $("copyBtn").onclick=async()=>{try{await navigator.clipboard.writeText($("refLink").value);$("copyBtn").textContent="Tersalin";setTimeout(()=>$("copyBtn").textContent="Salin",1200)}catch(_){}};
-$("wdForm").onsubmit=async e=>{e.preventDefault();$("wdMsg").style.display="block";$("wdMsg").textContent="Mengirim permintaan...";try{await SGCore.rpc("sg_request_withdraw",{p_amount:Number($("wdAmount").value||0),p_method:$("wdMethod").value,p_account_name:$("wdName").value.trim(),p_account_number:$("wdNumber").value.trim()},"user");$("wdMsg").textContent="Permintaan pencairan berhasil dikirim.";$("wdForm").reset();await load()}catch(err){if(err.message!=="SESSION_EXPIRED")$("wdMsg").textContent="Belum dapat mengajukan pencairan."}};
+
+$("wdForm").onsubmit=async e=>{
+ e.preventDefault();
+ $("wdMsg").style.display="block";
+ $("wdMsg").textContent="Mengirim permintaan...";
+ try{
+  await SGCore.rpc("sg_request_withdraw",{p_amount:Number($("wdAmount").value||0),p_method:$("wdMethod").value,p_account_name:$("wdName").value.trim(),p_account_number:$("wdNumber").value.trim()},"user");
+  $("wdMsg").textContent="Permintaan pencairan berhasil dikirim.";
+  $("wdForm").reset();
+  await load();
+ }catch(err){
+  if(err.message!=="SESSION_EXPIRED")$("wdMsg").textContent="Belum dapat mengajukan pencairan.";
+ }
+};
+
 load();
 })();
 </script></body></html>

@@ -1,14 +1,16 @@
-SOLUSI GENZ V16.3 - ADMIN LOGIN DIRECT FIX
+SOLUSI GENZ V17.5 - BLUE CHECK PAYOUT
 
-Perbaikan:
-- Menghapus pengecekan RPC Admin dari halaman login.
-- Admin yang berhasil autentikasi langsung masuk Dashboard Admin.
-- Adminsolusi123 dan email Admin asli tetap diarahkan ke Admin.
-- Pelanggan lain tetap ke Dashboard Pelanggan.
+Perubahan:
+- Kolom Bukti di Riwayat Pencairan dihapus.
+- Tidak ada lagi tombol Lihat Bukti.
+- Status Dibayar menampilkan centang biru + 'Pembayaran Berhasil'.
+- Status Diproses menampilkan Menunggu.
+- Status Ditolak menampilkan Ditolak.
+- Tidak perlu SQL.
 
 Cara pasang:
 1. Extract ZIP.
-2. Replace auth.html di ROOT repo GitHub.
+2. Replace affiliate.html di root GitHub.
 3. Commit ke main.
 4. Tunggu Vercel Ready.
-5. Login ulang Admin.
+5. Refresh halaman Affiliate.
