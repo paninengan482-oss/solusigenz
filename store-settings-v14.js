@@ -1,12 +1,3 @@
-(function(){
-  if(!document.querySelector('link[data-sg-black-final]')){
-    const l=document.createElement("link");
-    l.rel="stylesheet";
-    l.href="solusi-genz-black-final.css";
-    l.setAttribute("data-sg-black-final","1");
-    document.head.appendChild(l);
-  }
-})();
 window.SG_DEFAULT_SETTINGS={
  hero_title:"Produk digital pilihan, akses lebih praktis.",
  hero_subtitle:"Belanja produk digital dengan alur yang jelas. Setelah transaksi pertama berhasil, kamu juga dapat mengaktifkan akses affiliate Solusi Genz.",
@@ -23,7 +14,34 @@ window.sgApplyGlobalBrand=function(s){
 };
 window.sgLoadSettings=async function(){
  let s={...window.SG_DEFAULT_SETTINGS};
- try{const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_public_store_settings",{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},body:"{}",cache:"no-store"});if(r.ok){const rows=await r.json();const row=Array.isArray(rows)?rows[0]:rows;if(row)s={...s,...row}}}catch(e){}
- try{const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_public_extra_settings",{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},body:"{}",cache:"no-store"});if(r.ok){const rows=await r.json();const row=Array.isArray(rows)?rows[0]:rows;if(row)s={...s,...row}}}catch(e){}
- window.SG_STORE_SETTINGS=s;window.sgApplyGlobalBrand(s);document.dispatchEvent(new CustomEvent("sg-settings-ready",{detail:s}));return s;
+ try{
+   const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_public_store_settings",{
+     method:"POST",
+     headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},
+     body:"{}",
+     cache:"no-store"
+   });
+   if(r.ok){
+     const rows=await r.json();
+     const row=Array.isArray(rows)?rows[0]:rows;
+     if(row)s={...s,...row};
+   }
+ }catch(e){}
+ try{
+   const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/sg_public_extra_settings",{
+     method:"POST",
+     headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},
+     body:"{}",
+     cache:"no-store"
+   });
+   if(r.ok){
+     const rows=await r.json();
+     const row=Array.isArray(rows)?rows[0]:rows;
+     if(row)s={...s,...row};
+   }
+ }catch(e){}
+ window.SG_STORE_SETTINGS=s;
+ window.sgApplyGlobalBrand(s);
+ document.dispatchEvent(new CustomEvent("sg-settings-ready",{detail:s}));
+ return s;
 };
