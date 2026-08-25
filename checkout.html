@@ -1,13 +1,27 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="v16-core.css"></head><body>
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="v17-core.css"></head><body>
 <script>if(!localStorage.getItem("sg_user_token"))location.replace("auth.html")</script>
-<main class="auth-wrap"><section class="card auth-card"><a href="shop.html"><img class="auth-logo" src="solusi-genz-v2.svg"></a><span class="badge">CHECKOUT</span><h1 id="pname">Produk Digital</h1><p class="muted">Buat pesanan, transfer, lalu upload bukti pembayaran.</p>
-<div class="field"><label>Total</label><input id="pprice" disabled></div><div class="field" style="margin-top:12px"><label>Nama lengkap</label><input id="name"></div><div class="field" style="margin-top:12px"><label>WhatsApp</label><input id="wa"></div><div class="field" style="margin-top:12px"><label>Email akun</label><input id="email" disabled></div>
+<main class="auth-wrap"><section class="card auth-card"><a href="shop.html"><img class="auth-logo" src="solusi-genz-v2.svg"></a><span class="badge">CHECKOUT</span><h1 id="pname">Produk Digital</h1><p class="muted">Buat pesanan, transfer sesuai instruksi, lalu upload bukti pembayaran.</p>
+<div class="field"><label>Total</label><input id="pprice" disabled></div><div class="field" style="margin-top:12px"><label>Nama lengkap</label><input id="name"></div><div class="field" style="margin-top:12px"><label>WhatsApp</label><input id="wa" inputmode="tel"></div><div class="field" style="margin-top:12px"><label>Email akun</label><input id="email" disabled></div><div class="field" style="margin-top:12px"><label>Metode pembayaran</label><select id="method"><option>Transfer Bank Mandiri</option></select></div>
 <button id="orderBtn" class="btn btn-primary" style="width:100%;margin-top:18px">Buat Pesanan</button><div id="msg" class="notice" style="margin-top:14px">Pembayaran baru dianggap sah setelah diverifikasi Admin.</div></section></main>
 <script src="supabase-config.js"></script><script src="sg-core.js"></script><script>
-const q=new URLSearchParams(location.search),product=q.get("product")||"Produk Digital",price=Number(q.get("price")||0),token=localStorage.getItem("sg_user_token")||"",email=(localStorage.getItem("sg_user_email")||"").trim();
-pname.textContent=product;pprice.value="Rp "+price.toLocaleString("id-ID");name.value=localStorage.getItem("sg_user_name")||"";wa.value=localStorage.getItem("sg_user_wa")||"";document.getElementById("email").value=email;
+(()=>{
+const $=id=>document.getElementById(id),q=new URLSearchParams(location.search),product=(q.get("product")||"").trim(),price=Number(q.get("price")||0),email=(localStorage.getItem("sg_user_email")||"").trim().toLowerCase(),uid=localStorage.getItem("sg_user_id")||"";
+$("pname").textContent=product||"Produk Digital";$("pprice").value="Rp "+price.toLocaleString("id-ID");$("name").value=localStorage.getItem("sg_user_name")||"";$("wa").value=localStorage.getItem("sg_user_wa")||"";$("email").value=email;
+if(!product||!Number.isFinite(price)||price<=0){$("msg").textContent="Produk checkout tidak valid. Kembali ke halaman Produk lalu pilih ulang.";$("orderBtn").disabled=true}
 function inv(){const a=new Uint8Array(6);crypto.getRandomValues(a);return"SGZ-"+Array.from(a,b=>b.toString(16).padStart(2,"0")).join("").toUpperCase()}
-orderBtn.onclick=async()=>{const n=name.value.trim(),w=wa.value.trim();if(!n||!w){msg.textContent="Lengkapi nama dan WhatsApp.";return}orderBtn.disabled=true;msg.textContent="Membuat pesanan...";
-try{const invoice=inv();await SGCore.rpc("sg_create_order",{p_invoice:invoice,p_product_name:product,p_price:price,p_customer_name:n,p_whatsapp:w,p_email:email,p_payment_method:"Transfer Bank Mandiri"},token,"user");localStorage.setItem("sg_user_name",n);localStorage.setItem("sg_user_wa",w);location.replace("status.html?id="+encodeURIComponent(invoice)+"&new=1")}
-catch(e){if(e.message!=="SESSION_EXPIRED"){msg.textContent="Pesanan belum berhasil dibuat.";orderBtn.disabled=false}}};
+async function attachRef(){const ref=(localStorage.getItem("sg_ref_code")||"").trim().toUpperCase();if(!ref)return;try{await SGCore.rpc("sg_affiliate_attach_referral",{p_buyer_email:email,p_buyer_user_id:uid||null,p_referral_code:ref},"user")}catch(e){console.warn("Referral dilewati",e)}}
+$("orderBtn").onclick=async()=>{
+ const n=$("name").value.trim(),w=$("wa").value.trim();
+ if(!n||!w){$("msg").textContent="Lengkapi nama dan WhatsApp.";return}
+ if(!email){location.replace("auth.html?expired=1");return}
+ $("orderBtn").disabled=true;$("orderBtn").textContent="Membuat...";$("msg").textContent="Membuat pesanan...";
+ try{
+  await attachRef();
+  const invoice=inv();
+  await SGCore.rpc("sg_create_order",{p_invoice:invoice,p_product_name:product,p_price:price,p_customer_name:n,p_whatsapp:w,p_email:email,p_payment_method:$("method").value},"user");
+  localStorage.setItem("sg_user_name",n);localStorage.setItem("sg_user_wa",w);
+  location.replace("status.html?id="+encodeURIComponent(invoice)+"&new=1");
+ }catch(e){console.error(e);if(e.message!=="SESSION_EXPIRED"){$("msg").textContent="Pesanan belum berhasil dibuat. Coba sekali lagi atau Refresh halaman.";$("orderBtn").disabled=false;$("orderBtn").textContent="Buat Pesanan"}}
+};
+})();
 </script></body></html>
