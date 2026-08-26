@@ -4,7 +4,7 @@ window.SG_DEFAULT_SETTINGS={
  promo_title:"Solusi Genz",promo_discount:"0",reward_per_purchase:"0",reward_note:"",
  company_profile:"Solusi Genz adalah platform produk digital yang mengutamakan proses pembelian yang ringkas, transparan, dan mudah dipantau.",
  about_title:"Tentang Solusi Genz",about_text:"Solusi Genz membantu pelanggan mendapatkan produk digital melalui proses yang praktis dan terstruktur. Program affiliate hanya terbuka setelah pelanggan melakukan transaksi produk yang valid, sehingga komisi berasal dari aktivitas penjualan nyata.",
- support_whatsapp:"",logo_data_url:"",affiliate_rate:"10",founder_name:"Dede Fahruroji",sourcing_name:"Solusi Genz"
+ support_whatsapp:"",logo_data_url:"",affiliate_rate:"10",founder_name:"Difa Al Azizi",sourcing_name:"Difa Al Azizi"
 };
 window.SG_STORE_SETTINGS={...window.SG_DEFAULT_SETTINGS};
 window.sgApplyGlobalBrand=function(s){
