@@ -114,3 +114,91 @@ grant execute on function public.sg_admin_catalog_save_v2(uuid,text,text,text,te
 
 notify pgrst,'reload schema';
 commit;
+
+
+-- === BUSINESS FINAL V3: BUKTI TF + KIRIM AKSES ===
+begin;
+
+alter table public.sg_orders add column if not exists payment_proof_data_url text;
+alter table public.sg_orders add column if not exists access_text text;
+alter table public.sg_orders add column if not exists access_note text;
+alter table public.sg_orders add column if not exists access_delivered_at timestamptz;
+
+-- Customer: cek hanya order milik akun yang sedang login.
+drop function if exists public.sg_check_order_v3(text);
+create function public.sg_check_order_v3(p_invoice text)
+returns table(
+ invoice text,product_name text,price bigint,customer_name text,email text,whatsapp text,
+ payment_method text,status text,created_at timestamptz,payment_proof_data_url text,
+ access_text text,access_note text,access_delivered_at timestamptz
+)
+language plpgsql security definer set search_path=public as $$
+declare v_email text:=lower(coalesce(auth.jwt()->>'email',''));
+begin
+ if v_email='' then raise exception 'Harus login'; end if;
+ return query
+ select o.invoice,o.product_name,o.price,o.customer_name,o.email,o.whatsapp,o.payment_method,o.status,o.created_at,
+        o.payment_proof_data_url,o.access_text,o.access_note,o.access_delivered_at
+ from public.sg_orders o
+ where upper(o.invoice)=upper(trim(p_invoice)) and lower(o.email)=v_email
+ limit 1;
+end $$;
+
+-- Customer: upload bukti transfer, status langsung Menunggu Verifikasi.
+drop function if exists public.sg_submit_payment_v3(text,text);
+create function public.sg_submit_payment_v3(p_invoice text,p_proof_data_url text)
+returns boolean language plpgsql security definer set search_path=public as $$
+declare v_email text:=lower(coalesce(auth.jwt()->>'email',''));
+begin
+ if v_email='' then raise exception 'Harus login'; end if;
+ if p_proof_data_url is null or length(p_proof_data_url)<30 then raise exception 'Bukti transfer wajib'; end if;
+ update public.sg_orders
+ set payment_proof_data_url=p_proof_data_url,status='Menunggu Verifikasi'
+ where upper(invoice)=upper(trim(p_invoice)) and lower(email)=v_email
+   and lower(coalesce(status,'')) not in ('lunas','dibayar','diproses','selesai');
+ return found;
+end $$;
+
+-- Admin list orders kini membawa bukti dan akses.
+drop function if exists public.sg_admin_list_orders();
+create function public.sg_admin_list_orders()
+returns table(
+ invoice text,customer_name text,email text,whatsapp text,product_name text,price bigint,
+ payment_method text,status text,created_at timestamptz,payment_proof_data_url text,
+ access_text text,access_note text,access_delivered_at timestamptz
+)
+language plpgsql security definer set search_path=public as $$
+begin
+ if not public.sg_is_admin() then raise exception 'Akses admin ditolak'; end if;
+ return query
+ select o.invoice,o.customer_name,o.email,o.whatsapp,o.product_name,o.price,o.payment_method,o.status,o.created_at,
+        o.payment_proof_data_url,o.access_text,o.access_note,o.access_delivered_at
+ from public.sg_orders o order by o.created_at desc;
+end $$;
+
+-- Owner kirim akses + catatan ke pelanggan.
+drop function if exists public.sg_admin_deliver_access(text,text,text,text);
+create function public.sg_admin_deliver_access(p_invoice text,p_access_text text,p_access_note text,p_status text)
+returns boolean language plpgsql security definer set search_path=public as $$
+begin
+ if not public.sg_is_admin() then raise exception 'Akses admin ditolak'; end if;
+ update public.sg_orders
+ set access_text=nullif(trim(p_access_text),''),
+     access_note=nullif(trim(p_access_note),''),
+     access_delivered_at=case when nullif(trim(p_access_text),'') is not null then now() else access_delivered_at end,
+     status=case when p_status in ('Diproses','Selesai') then p_status else status end
+ where upper(invoice)=upper(trim(p_invoice));
+ return found;
+end $$;
+
+revoke all on function public.sg_check_order_v3(text) from public;
+grant execute on function public.sg_check_order_v3(text) to authenticated;
+revoke all on function public.sg_submit_payment_v3(text,text) from public;
+grant execute on function public.sg_submit_payment_v3(text,text) to authenticated;
+revoke all on function public.sg_admin_list_orders() from public;
+grant execute on function public.sg_admin_list_orders() to authenticated;
+revoke all on function public.sg_admin_deliver_access(text,text,text,text) from public;
+grant execute on function public.sg_admin_deliver_access(text,text,text,text) to authenticated;
+
+notify pgrst,'reload schema';
+commit;

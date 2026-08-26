@@ -24,6 +24,42 @@
 <section class="visual-story"><div class="container"><div class="visual-card" style="min-height:300px"><div class="visual-copy"><small>DUKUNGAN</small><h3>Status pesanan dan bantuan tetap terasa dekat.</h3><p>Desain dibuat memberi rasa bahwa pelanggan tidak ditinggal setelah pembayaran. Informasi pesanan, akun, dan affiliate tetap berada dalam satu ekosistem.</p></div><div class="visual-art"><img data-sg-media="support_media_data_url" src="assets/illustration-support.svg" alt="Ilustrasi dukungan pelanggan Solusi Genz"></div></div></div></section>
 
 <section class="section" id="tentang"><div class="container"><span class="badge">TENTANG SOLUSI GENZ</span><h2 id="aboutTitle">Layanan digital yang rapi, praktis, dan mudah dipantau.</h2><p class="lead" id="aboutText">Solusi Genz membantu pelanggan mendapatkan kebutuhan produk digital melalui alur pembelian yang sederhana dan terstruktur.</p><div class="owner-strip"><div class="person"><small>FOUNDER</small><b id="founderName">Difa Al Azizi</b></div><div class="person"><small>PLATFORM</small><b>Solusi Genz — Digital Product Store</b></div></div><div class="owner-strip" style="margin-top:14px"><div class="person"><small>DIGITAL PRODUCT SOURCING</small><b id="sourcingName">Difa Al Azizi</b></div><div class="person"><small>LAYANAN</small><b>Produk digital & dukungan pelanggan</b></div></div></div></section>
+
+<section class="section" id="owner-login"><div class="container">
+  <div class="owner-entry">
+    <span class="badge">AKSES OWNER</span>
+    <h3>Masuk ke Dashboard Owner</h3>
+    <p class="muted">Gunakan ID Owner dan password. Halaman login Owner terpisah sudah dihapus.</p>
+    <div class="owner-entry-grid">
+      <div class="field"><label>ID Owner</label><input id="ownerId" autocomplete="username" placeholder="ADMINSOLUSI123"></div>
+      <div class="field"><label>Password</label><input id="ownerPassword" type="password" autocomplete="current-password"></div>
+      <button id="ownerLoginBtn" class="btn btn-primary" type="button">Masuk Owner</button>
+    </div>
+    <div id="ownerLoginMsg" class="notice" style="display:none;margin-top:12px"></div>
+  </div>
+</div></section>
+
 </main>
-<footer class="footer"><div class="container footer-flex"><div><b>SOLUSI GENZ</b><p>Digital Product Store.</p></div><div><small>© 2026 Solusi Genz. Produk pihak ketiga tunduk pada ketentuan masing-masing penyedia.</small><br><a href="admin.html">Masuk sebagai Owner →</a></div></div></footer>
-<script src="supabase-config.js"></script><script src="store-settings-v14.js"></script><script>document.addEventListener("sg-settings-ready",e=>{const s=e.detail;if(s.hero_title)landingHero.textContent=s.hero_title;if(s.hero_subtitle)landingSub.textContent=s.hero_subtitle;if(s.about_title)aboutTitle.textContent=s.about_title;if(s.about_text||s.company_profile)aboutText.textContent=s.about_text||s.company_profile;if(s.founder_name)founderName.textContent=s.founder_name;if(window.sourcingName&&s.sourcing_name)sourcingName.textContent=s.sourcing_name;if(s.hero_media_data_url)heroBrand.src=s.hero_media_data_url;else if(s.logo_data_url)heroBrand.src=s.logo_data_url});sgLoadSettings();</script></body></html>
+<footer class="footer"><div class="container footer-flex"><div><b>SOLUSI GENZ</b><p>Digital Product Store.</p></div><div><small>© 2026 Solusi Genz. Produk pihak ketiga tunduk pada ketentuan masing-masing penyedia.</small></div></div></footer>
+<script src="supabase-config.js"></script><script src="store-settings-v14.js"></script><script>document.addEventListener("sg-settings-ready",e=>{const s=e.detail;if(s.hero_title)landingHero.textContent=s.hero_title;if(s.hero_subtitle)landingSub.textContent=s.hero_subtitle;if(s.about_title)aboutTitle.textContent=s.about_title;if(s.about_text||s.company_profile)aboutText.textContent=s.about_text||s.company_profile;if(s.founder_name)founderName.textContent=s.founder_name;if(window.sourcingName&&s.sourcing_name)sourcingName.textContent=s.sourcing_name;if(s.hero_media_data_url)heroBrand.src=s.hero_media_data_url;else if(s.logo_data_url)heroBrand.src=s.logo_data_url});sgLoadSettings();</script>
+<script>
+(()=>{const OWNER_ID="ADMINSOLUSI123",OWNER_EMAIL="paninengan482@gmail.com";
+const btn=document.getElementById("ownerLoginBtn");if(!btn)return;
+btn.onclick=async()=>{const id=(document.getElementById("ownerId").value||"").trim().toUpperCase(),pw=document.getElementById("ownerPassword").value||"",msg=document.getElementById("ownerLoginMsg");
+msg.style.display="none";
+if(id!==OWNER_ID){msg.textContent="ID Owner tidak dikenali.";msg.style.display="block";return}
+if(!pw){msg.textContent="Masukkan password Owner.";msg.style.display="block";return}
+btn.disabled=true;btn.textContent="Memproses...";
+try{
+ const r=await fetch(window.SG_SUPABASE_URL+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY},body:JSON.stringify({email:OWNER_EMAIL,password:pw})});
+ const t=await r.text();if(!r.ok)throw Error(t);const d=JSON.parse(t);
+ sessionStorage.setItem("sg_admin_token",d.access_token);sessionStorage.setItem("sg_admin_email",OWNER_EMAIL);
+ location.href="admin.html";
+}catch(e){msg.textContent="ID atau password Owner salah.";msg.style.display="block"}
+finally{btn.disabled=false;btn.textContent="Masuk Owner"}
+};
+document.getElementById("ownerPassword").addEventListener("keydown",e=>{if(e.key==="Enter")btn.click()});
+})();
+</script>
+
+</body></html>

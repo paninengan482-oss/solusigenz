@@ -454,3 +454,99 @@ body{
   .mini-flow{grid-template-columns:1fr 1fr}
   .affiliate-visual{grid-template-columns:1fr}
 }
+
+
+/* === BUSINESS FINAL V3 — ADMIN CATALOG + MOBILE POLISH === */
+#products .product-admin-form{
+  background:linear-gradient(180deg,#111722,#0d1118)!important;
+  border:1px solid rgba(255,255,255,.09)!important;
+  padding:20px!important;
+  border-radius:20px!important;
+}
+#products .product-admin-form .field label{
+  color:#cbd5e1!important;
+  font-weight:750!important;
+  margin-bottom:4px!important;
+}
+#products .product-admin-form input,
+#products .product-admin-form textarea,
+#products .product-admin-form select{
+  background:#151b25!important;
+  color:#f5f7fb!important;
+  border:1px solid #30394a!important;
+  min-height:44px!important;
+}
+#products .product-admin-form textarea{min-height:96px!important}
+#products .product-admin-form input::placeholder,
+#products .product-admin-form textarea::placeholder{color:#748095!important}
+#products .logo-manager{
+  background:#111722!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  color:#fff!important;
+}
+#products .logo-preview{
+  background:#0a0d12!important;
+  border:1px dashed #374151!important;
+}
+#products .table-wrap{margin-top:18px!important}
+#products .table th{background:#111722!important;color:#9da8b8!important}
+#products .table td{background:#0d1118!important;color:#e8edf5!important}
+#products .table tr:hover td{background:#121925!important}
+.access-delivery{
+  margin-top:18px;padding:18px;border-radius:16px;
+  background:linear-gradient(180deg,#111722,#0d1118);
+  border:1px solid rgba(255,255,255,.09)
+}
+.access-delivery h3{margin:0 0 8px;color:#fff}
+.access-delivery p{color:#a7b1c0;line-height:1.65;white-space:pre-wrap}
+.payment-proof{
+  display:block;width:100%;max-height:320px;object-fit:contain;
+  border-radius:14px;background:#090b10;border:1px solid rgba(255,255,255,.08)
+}
+.owner-entry{
+  margin-top:24px;padding:20px;border-radius:18px;
+  background:linear-gradient(180deg,#111722,#0d1118);
+  border:1px solid rgba(255,255,255,.08)
+}
+.owner-entry h3{margin:0 0 6px;color:#fff}
+.owner-entry-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-top:14px}
+.owner-entry .field input{min-height:44px}
+.admin-access-box{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px
+}
+.order-access-editor textarea{min-height:100px!important}
+
+@media(max-width:760px){
+  body{overflow-x:hidden!important}
+  .main{padding:14px 12px 72px!important}
+  .topbar{display:block!important;margin-bottom:14px!important}
+  .topbar .btn{margin-top:10px!important}
+  .stats{grid-template-columns:1fr 1fr!important;gap:10px!important}
+  .stat{padding:14px!important}
+  .stat h3{font-size:20px!important}
+  .panel{padding:16px!important}
+  .table-wrap{border-radius:14px!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  .table{min-width:760px!important}
+  #products .product-admin-form{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;padding:14px!important}
+  #products .product-admin-form .wide,
+  #products .product-admin-form .full{grid-column:1!important}
+  #products .logo-manager{grid-template-columns:82px 1fr!important;padding:12px!important}
+  #products .logo-preview{width:78px!important;height:78px!important}
+  .settings-grid{grid-template-columns:1fr!important}
+  .owner-entry-grid{grid-template-columns:1fr!important}
+  .admin-access-box{grid-template-columns:1fr!important}
+  .auth-wrap{padding:14px!important}
+  .auth-card{margin:0!important;width:100%!important}
+  .form-wrap{padding:14px!important}
+  .form-card{padding:18px!important}
+  .side-nav{display:grid!important;grid-template-columns:1fr 1fr!important}
+  .sidebar{padding:14px!important}
+  .sidebar>a:first-child{min-height:64px!important}
+  .shop-grid{grid-template-columns:1fr!important}
+  .welcome{padding:22px!important}
+}
+@media(max-width:430px){
+  .stats{grid-template-columns:1fr!important}
+  .hero-actions,.sg-hero-actions{display:grid!important;grid-template-columns:1fr!important}
+  .btn{width:100%}
+}
