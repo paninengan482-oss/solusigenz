@@ -1,0 +1,12 @@
+CHECKLIST SEBELUM LAUNCH
+[ ] GitHub commit selesai
+[ ] Vercel Ready
+[ ] RUN_ONCE_SUPABASE_FINAL.sql sukses
+[ ] Owner login sukses
+[ ] Lupa password email masuk
+[ ] Produk muncul dan foto bisa diganti
+[ ] Pesanan baru berhasil
+[ ] Admin bisa ubah status
+[ ] Affiliate aktif setelah transaksi valid
+[ ] Pencairan dapat diajukan dan diproses
+[ ] Domain utama tidak menampilkan peringatan keamanan
