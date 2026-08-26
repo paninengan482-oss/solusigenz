@@ -202,3 +202,95 @@ grant execute on function public.sg_admin_deliver_access(text,text,text,text) to
 
 notify pgrst,'reload schema';
 commit;
+
+
+-- === V4: KONTEN AFFILIATE & CARA ORDER BISA DIUBAH DARI PERFORMA ===
+begin;
+
+alter table public.sg_store_settings_ext add column if not exists affiliate_title text;
+alter table public.sg_store_settings_ext add column if not exists affiliate_text text;
+alter table public.sg_store_settings_ext add column if not exists commission_1_3_days bigint default 2000;
+alter table public.sg_store_settings_ext add column if not exists commission_1_week bigint default 5000;
+alter table public.sg_store_settings_ext add column if not exists commission_1_month bigint default 10000;
+alter table public.sg_store_settings_ext add column if not exists commission_1_year bigint default 20000;
+alter table public.sg_store_settings_ext add column if not exists order_title text default 'Cara Order';
+
+drop function if exists public.sg_public_extra_settings();
+create function public.sg_public_extra_settings()
+returns table(
+ founder_name text,
+ affiliate_enabled boolean,
+ hero_media_data_url text,
+ transaction_media_data_url text,
+ referral_media_data_url text,
+ support_media_data_url text,
+ affiliate_title text,
+ affiliate_text text,
+ commission_1_3_days bigint,
+ commission_1_week bigint,
+ commission_1_month bigint,
+ commission_1_year bigint,
+ order_title text
+)
+language sql security definer set search_path=public as $$
+ select s.founder_name,s.affiliate_enabled,s.hero_media_data_url,s.transaction_media_data_url,
+        s.referral_media_data_url,s.support_media_data_url,
+        coalesce(s.affiliate_title,'Affiliate Solusi Genz'),
+        coalesce(s.affiliate_text,'Dapatkan komisi dengan cara share kode undangan kamu ke teman terdekat, lalu ajak mereka membeli produk digital Solusi Genz. Komisi juga akan terus kamu dapatkan ketika teman yang kamu undang melakukan repeat order.'),
+        coalesce(s.commission_1_3_days,2000),coalesce(s.commission_1_week,5000),
+        coalesce(s.commission_1_month,10000),coalesce(s.commission_1_year,20000),
+        coalesce(s.order_title,'Cara Order')
+ from public.sg_store_settings_ext s where s.id=1;
+$$;
+
+drop function if exists public.sg_admin_save_extra_settings_v2(text,boolean,text,text,text,text);
+create function public.sg_admin_save_extra_settings_v2(
+ p_founder_name text,
+ p_affiliate_enabled boolean,
+ p_hero_media_data_url text,
+ p_transaction_media_data_url text,
+ p_referral_media_data_url text,
+ p_support_media_data_url text,
+ p_affiliate_title text,
+ p_affiliate_text text,
+ p_commission_1_3_days bigint,
+ p_commission_1_week bigint,
+ p_commission_1_month bigint,
+ p_commission_1_year bigint,
+ p_order_title text
+) returns boolean language plpgsql security definer set search_path=public as $$
+begin
+ if not public.sg_is_admin() then raise exception 'Akses ditolak'; end if;
+ insert into public.sg_store_settings_ext(
+   id,founder_name,affiliate_enabled,hero_media_data_url,transaction_media_data_url,
+   referral_media_data_url,support_media_data_url,affiliate_title,affiliate_text,
+   commission_1_3_days,commission_1_week,commission_1_month,commission_1_year,order_title,updated_at
+ ) values(
+   1,coalesce(nullif(trim(p_founder_name),''),'Difa Al Azizi'),coalesce(p_affiliate_enabled,true),
+   p_hero_media_data_url,p_transaction_media_data_url,p_referral_media_data_url,p_support_media_data_url,
+   coalesce(nullif(trim(p_affiliate_title),''),'Affiliate Solusi Genz'),
+   p_affiliate_text,
+   greatest(0,coalesce(p_commission_1_3_days,2000)),
+   greatest(0,coalesce(p_commission_1_week,5000)),
+   greatest(0,coalesce(p_commission_1_month,10000)),
+   greatest(0,coalesce(p_commission_1_year,20000)),
+   coalesce(nullif(trim(p_order_title),''),'Cara Order'),now()
+ )
+ on conflict(id) do update set
+   founder_name=excluded.founder_name,affiliate_enabled=excluded.affiliate_enabled,
+   hero_media_data_url=excluded.hero_media_data_url,transaction_media_data_url=excluded.transaction_media_data_url,
+   referral_media_data_url=excluded.referral_media_data_url,support_media_data_url=excluded.support_media_data_url,
+   affiliate_title=excluded.affiliate_title,affiliate_text=excluded.affiliate_text,
+   commission_1_3_days=excluded.commission_1_3_days,commission_1_week=excluded.commission_1_week,
+   commission_1_month=excluded.commission_1_month,commission_1_year=excluded.commission_1_year,
+   order_title=excluded.order_title,updated_at=now();
+ return true;
+end $$;
+
+revoke all on function public.sg_public_extra_settings() from public;
+grant execute on function public.sg_public_extra_settings() to anon,authenticated;
+revoke all on function public.sg_admin_save_extra_settings_v2(text,boolean,text,text,text,text,text,text,bigint,bigint,bigint,bigint,text) from public;
+grant execute on function public.sg_admin_save_extra_settings_v2(text,boolean,text,text,text,text,text,text,bigint,bigint,bigint,bigint,text) to authenticated;
+
+notify pgrst,'reload schema';
+commit;

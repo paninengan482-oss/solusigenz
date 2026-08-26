@@ -550,3 +550,91 @@ body{
   .hero-actions,.sg-hero-actions{display:grid!important;grid-template-columns:1fr!important}
   .btn{width:100%}
 }
+
+
+/* === V4 LAUNCH UI POLISH === */
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden!important}
+img{max-width:100%}
+.navin{min-width:0}
+.sg-hero-v4{grid-template-columns:1fr!important;gap:24px!important}
+.sg-hero-copy-wrap{max-width:860px}
+.hero-wide-media{
+  width:100%;
+  aspect-ratio:16/6;
+  min-height:220px;
+  border-radius:22px;
+  overflow:hidden;
+  background:linear-gradient(145deg,#10141c,#171d28);
+  border:1px solid rgba(255,255,255,.08);
+}
+.hero-wide-media img{width:100%;height:100%;object-fit:cover;display:block}
+.sg-monogram{display:none!important}
+.order-visual-card,.support-live-card{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+.auth-v4{text-align:left}
+.auth-logo-center{display:flex;justify-content:center;margin-bottom:18px}
+.auth-logo-center a{display:block!important;background:transparent!important;border:0!important;padding:0!important}
+.auth-logo-center img{width:170px!important;height:78px!important;object-fit:contain!important}
+.auth-v4 .badge{display:none!important}
+.auth-v4 h1{text-align:left;margin-top:8px}
+.auth-v4 .muted{text-align:left}
+#products .product-admin-form,
+#products .product-admin-form .field,
+#products .product-admin-form input,
+#products .product-admin-form select,
+#products .product-admin-form textarea{min-width:0!important;width:100%!important}
+#products .product-admin-form{overflow:hidden!important}
+#products .logo-manager{min-width:0!important;width:100%!important}
+#products .logo-manager>div{min-width:0!important}
+#products input[type=file]{width:100%!important;max-width:100%!important;overflow:hidden!important}
+.main,.panel,.card{min-width:0}
+.main{width:100%}
+.app-shell{min-width:0}
+.table-wrap{max-width:100%!important}
+.affiliate-settings-edit{margin-top:18px!important}
+
+@media(max-width:760px){
+  .navlinks a:not(.btn){display:none!important}
+  .navlinks{margin-left:auto!important}
+  .navlinks .btn{width:auto!important;padding:10px 14px!important}
+  .brand{max-width:180px}
+  .brand img{width:124px!important}
+  .sg-hero-inner{padding:24px 18px!important}
+  .sg-hero-card h1{font-size:34px!important;line-height:1.05!important}
+  .sg-hero-subtitle{font-size:18px!important}
+  .sg-hero-actions{display:grid!important;grid-template-columns:1fr!important;width:100%!important}
+  .sg-hero-actions .btn{width:100%!important}
+  .hero-wide-media{aspect-ratio:16/7!important;min-height:0!important;border-radius:18px!important}
+  .hero-wide-media img{object-fit:cover!important}
+  .mini-flow{grid-template-columns:1fr!important}
+  .order-visual-card,.support-live-card,.affiliate-visual{grid-template-columns:1fr!important}
+  .visual-art{height:170px!important}
+  .commission-grid{grid-template-columns:1fr 1fr!important}
+  .owner-strip{grid-template-columns:1fr!important}
+  .auth-wrap{align-items:flex-start!important;padding-top:24px!important}
+  .auth-card{width:100%!important;max-width:100%!important}
+  .auth-logo-center img{width:150px!important;height:68px!important}
+  .sidebar{position:relative!important;width:100%!important;min-height:auto!important;display:block!important}
+  .side-nav{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .side-nav a{padding:11px!important;text-align:center!important}
+  .app-shell{display:block!important;width:100%!important}
+  .main{width:100%!important;padding:14px 12px 72px!important}
+  .panel{width:100%!important;max-width:100%!important}
+  #products .product-admin-form{padding:14px!important;border-radius:16px!important}
+  #products .product-admin-form .field{grid-column:1!important}
+  #products .logo-manager{display:grid!important;grid-template-columns:86px minmax(0,1fr)!important;gap:10px!important;padding:10px!important}
+  #products .logo-preview{width:82px!important;height:82px!important}
+  #products .toolbar{display:grid!important;grid-template-columns:1fr!important;width:100%!important}
+  #products .toolbar .btn{width:100%!important}
+  .order-access-editor .admin-access-box{grid-template-columns:1fr!important}
+  .table{min-width:720px!important}
+  .footer-flex{display:block!important}
+}
+@media(max-width:430px){
+  .container{padding-left:12px!important;padding-right:12px!important}
+  .sg-hero-card{border-radius:16px!important}
+  .sg-hero-card h1{font-size:31px!important}
+  .section h2{font-size:27px!important}
+  .commission-grid{grid-template-columns:1fr!important}
+  .side-nav{grid-template-columns:1fr 1fr!important}
+}
