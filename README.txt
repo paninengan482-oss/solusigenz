@@ -1,16 +1,13 @@
-SOLUSI GENZ V17.5 - BLUE CHECK PAYOUT
+SOLUSI GENZ V7 FINAL CLEAR
 
-Perubahan:
-- Kolom Bukti di Riwayat Pencairan dihapus.
-- Tidak ada lagi tombol Lihat Bukti.
-- Status Dibayar menampilkan centang biru + 'Pembayaran Berhasil'.
-- Status Diproses menampilkan Menunggu.
-- Status Ditolak menampilkan Ditolak.
-- Tidak perlu SQL.
+Urutan instalasi:
+1. Supabase > SQL Editor > New Query.
+2. Paste seluruh isi SOLUSI_GENZ_V7_FINAL.sql lalu Run sekali.
+3. Pastikan hasil akhir menampilkan paninengan482@gmail.com | true.
+4. Upload file ZIP V7 ini langsung ke Vercel New Project / Drop to Deploy.
+5. Pastikan index.html berada di root.
+6. Deploy.
+7. Tes: checkout > Saya Sudah Bayar > admin login > Lunas > Proses > Selesai > cek status pelanggan.
 
-Cara pasang:
-1. Extract ZIP.
-2. Replace affiliate.html di root GitHub.
-3. Commit ke main.
-4. Tunggu Vercel Ready.
-5. Refresh halaman Affiliate.
+Jangan masukkan Secret/Service Role Key ke frontend.
+Deploy triger
