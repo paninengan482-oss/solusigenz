@@ -46,7 +46,7 @@
 
 <section id="orders" class="card panel pengelola-section-anchor"><div class="topbar" style="margin:0"><div><h3>Pesanan</h3><div class="sub">Periksa bukti pembayaran lalu lanjutkan proses pesanan.</div></div><select id="filterStatus"><option value="">Semua status</option><option>pending</option><option>Menunggu Verifikasi</option><option>Lunas</option><option>Diproses</option><option>Selesai</option><option>Dibatalkan</option></select></div><div id="ordersMsg" class="notice" style="display:none"></div><div class="table-wrap"><table class="table"><thead><tr><th>Invoice</th><th>Pelanggan</th><th>Produk</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="ordersBody"></tbody></table></div></section>
 
-<section class="card panel order-access-editor pengelola-section-anchor">
+<section id="access-editor" class="card panel order-access-editor pengelola-section-anchor">
   <h3>Kirim Akses ke Pelanggan</h3>
   <div class="sub">Setelah pembayaran diverifikasi, pilih invoice lalu ketik akses akun/link/kode dan catatan penting. Pelanggan akan melihatnya langsung di halaman Pesanan.</div>
   <div class="pengelola-access-box">
@@ -166,22 +166,23 @@ function renderOrders(){
 }
 async function verifyAndPrepare(invoice){
  try{
-   await rpc("sg_admin_set_status_v6",{p_invoice:invoice,p_status:"Diproses"});
+   const ok=await rpc("sg_admin_set_status_v6",{p_invoice:invoice,p_status:"Diproses"});
+   if(ok===false) throw new Error("Pesanan tidak ditemukan");
    await loadOrders();
    prepareAccess(invoice);
  }catch(e){
-   console.error(e);
-   alert("Verifikasi belum berhasil. Coba lagi.");
+   console.error("VERIFY ERROR:",e);
+   alert("Verifikasi gagal. Silakan refresh lalu coba lagi.");
  }
 }
 function prepareAccess(invoice){
- show("orders");
+ location.hash="#access-editor";
  setTimeout(()=>{
-   if(accessInvoice){
+   if(window.accessInvoice){
      accessInvoice.value=invoice;
      accessInvoice.dispatchEvent(new Event("change"));
-     accessInvoice.scrollIntoView({behavior:"smooth",block:"center"});
    }
+   document.getElementById("access-editor")?.scrollIntoView({behavior:"smooth",block:"start"});
  },100);
 }
 function renderCustomers(){const map={};for(const o of allOrders){const k=(o.email||o.whatsapp||o.customer_name||"unknown").toLowerCase();if(!map[k])map[k]={name:o.customer_name,email:o.email,wa:o.whatsapp,count:0,total:0};map[k].count++;map[k].total+=Number(o.price||0)}const rows=Object.values(map);customerBody.innerHTML=rows.length?rows.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.email)}</td><td>${esc(c.wa||"-")}</td><td>${c.count}</td><td>${money(c.total)}</td></tr>`).join(""):'<tr><td colspan="5">Belum ada pelanggan.</td></tr>'}
