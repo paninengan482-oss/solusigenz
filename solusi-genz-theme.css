@@ -838,3 +838,110 @@ img{max-width:100%}
  .visual-only-section{padding:18px 0!important}
  .landing-full-illustration{border-radius:16px!important}
 }
+
+
+/* V22 — Founder & Platform identity polish (landing only) */
+#tentang .identity-strip{
+  margin-top:26px!important;
+  gap:14px!important;
+}
+#tentang .identity-card{
+  position:relative!important;
+  min-height:112px!important;
+  padding:20px 22px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:16px!important;
+  overflow:hidden!important;
+  border-radius:22px!important;
+  background:linear-gradient(135deg,rgba(18,23,34,.98),rgba(11,14,21,.98))!important;
+  border:1px solid rgba(126,151,255,.16)!important;
+  box-shadow:0 18px 45px rgba(0,0,0,.24)!important;
+}
+#tentang .identity-card:before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:3px;
+  background:linear-gradient(180deg,#4d78ff,#28b7ff);
+  opacity:.95;
+}
+#tentang .identity-card:after{
+  content:"";
+  position:absolute;
+  width:150px;height:150px;border-radius:50%;
+  right:-72px;top:-85px;
+  background:radial-gradient(circle,rgba(69,116,255,.16),transparent 68%);
+  pointer-events:none;
+}
+#tentang .identity-icon{
+  width:54px;height:54px;min-width:54px;
+  display:grid;place-items:center;
+  border-radius:16px;
+  font-size:15px;font-weight:900;letter-spacing:.02em;
+  color:#fff;
+  background:linear-gradient(145deg,#255dff,#159ee8);
+  box-shadow:0 10px 25px rgba(32,102,255,.25),inset 0 1px 0 rgba(255,255,255,.22);
+  border:1px solid rgba(255,255,255,.14);
+}
+#tentang .brand-icon{
+  font-size:27px;font-style:italic;
+  background:linear-gradient(145deg,#087cf0,#10b9ff);
+}
+#tentang .identity-copy{min-width:0;position:relative;z-index:1}
+#tentang .identity-copy small{
+  display:block;
+  color:#7fa5ff!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.16em!important;
+  line-height:1!important;
+  margin-bottom:8px!important;
+}
+#tentang .identity-copy b{
+  display:block;
+  color:#f7f9ff!important;
+  font-size:19px!important;
+  line-height:1.2!important;
+  letter-spacing:-.015em!important;
+  white-space:normal!important;
+}
+#tentang .identity-copy span{
+  display:block;
+  margin-top:5px;
+  color:#8f9aaf;
+  font-size:12px;
+  line-height:1.35;
+}
+#tentang .identity-status{
+  margin-left:auto;
+  align-self:flex-start;
+  position:relative;z-index:1;
+  display:inline-flex;align-items:center;gap:6px;
+  white-space:nowrap;
+  padding:6px 9px;
+  border-radius:999px;
+  border:1px solid rgba(94,132,255,.18);
+  background:rgba(66,105,255,.08);
+  color:#8eabff;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+#tentang .identity-status i{
+  width:6px;height:6px;border-radius:50%;
+  background:#4a8bff;
+  box-shadow:0 0 10px rgba(74,139,255,.8);
+}
+@media(max-width:760px){
+  #tentang .identity-strip{gap:10px!important;margin-top:20px!important}
+  #tentang .identity-card{min-height:94px!important;padding:16px!important;gap:13px!important;border-radius:18px!important}
+  #tentang .identity-icon{width:46px;height:46px;min-width:46px;border-radius:14px;font-size:13px}
+  #tentang .brand-icon{font-size:23px}
+  #tentang .identity-copy b{font-size:17px!important}
+  #tentang .identity-copy span{font-size:11px}
+  #tentang .identity-status{font-size:8px;padding:5px 7px}
+}
+@media(max-width:420px){
+  #tentang .identity-status{display:none}
+}
