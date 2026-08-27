@@ -23,14 +23,14 @@
    const b=$("paidBtn"),m=$("paymsg"),f=$("proofFile")?.files?.[0];if(!b)return;
    if(!f){m.textContent="Pilih foto bukti transfer terlebih dahulu.";return}
    b.disabled=true;b.textContent="Mengirim bukti...";
-   try{const proof=await resize(f);await rpc("sg_submit_payment_v3",{p_invoice:invoice,p_proof_data_url:proof});m.innerHTML="<b>Bukti berhasil dikirim.</b> Menunggu verifikasi Owner.";setTimeout(check,700)}
+   try{const proof=await resize(f);await rpc("sg_submit_payment_v6",{p_invoice:invoice,p_proof_data_url:proof});m.innerHTML="<b>Bukti berhasil dikirim.</b> Menunggu verifikasi Owner.";setTimeout(check,700)}
    catch(err){console.error(err);m.innerHTML="<b>Bukti belum berhasil dikirim.</b> Coba lagi.";b.disabled=false;b.textContent="Kirim Bukti Pembayaran"}
  }
  async function check(){
    const id=$("invoice").value.trim().toUpperCase(),r=$("result");if(!id){r.innerHTML='<div class="note">Masukkan nomor invoice.</div>';return}
    r.innerHTML='<div class="note">Mencari pesanan...</div>';
    try{
-     const rows=await rpc("sg_check_order_v3",{p_invoice:id});const o=Array.isArray(rows)?rows[0]:rows;
+     const rows=await rpc("sg_check_order_v6",{p_invoice:id});const o=Array.isArray(rows)?rows[0]:rows;
      if(!o){r.innerHTML='<div class="note">Pesanan tidak ditemukan atau bukan milik akun ini.</div>';return}
      const created=o.created_at?new Date(o.created_at).toLocaleString("id-ID"):"-";
      r.innerHTML=`<div class="success">${isNew?'<b>✓ PESANAN BERHASIL DIBUAT</b>':'<b>Pesanan ditemukan</b>'}<h2 style="margin:10px 0">${esc(o.status)}</h2><p style="font-size:18px"><b>${esc(o.invoice)}</b></p><p>${esc(o.product_name)} — Rp ${Number(o.price||0).toLocaleString("id-ID")}</p><p>Nama: ${esc(o.customer_name)}<br>Metode: ${esc(o.payment_method)}<br>Dibuat: ${esc(created)}</p>${o.payment_proof_data_url?`<p><b>Bukti pembayaran sudah terkirim.</b></p>`:""}</div>${paymentBox(o)}${deliveryBox(o)}`;
