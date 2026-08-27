@@ -100,7 +100,7 @@ if(!localStorage.getItem("sg_user_token")) location.replace("auth.html");
    msgEl.textContent="Menyimpan pesanan...";
 
    try{
-     await rpc("sg_create_order_v4",{
+     await rpc("sg_create_order_v6",{
        p_invoice:invoice,
        p_product_name:product,
        p_price:Math.round(price),
@@ -112,12 +112,7 @@ if(!localStorage.getItem("sg_user_token")) location.replace("auth.html");
      localStorage.setItem("sg_user_name",name);
 
      // Affiliate tidak boleh menggagalkan transaksi utama.
-     try{await rpc("sg_affiliate_sync_self",{p_email:buyerEmail})}catch(_){}
-     try{await rpc("sg_affiliate_attach_order",{
-       p_invoice:invoice,
-       p_buyer_user_id:uid||null,
-       p_buyer_email:buyerEmail
-     })}catch(_){}
+     try{await rpc("sg_affiliate_sync_self_v6",{})}catch(_){}
 
      msgEl.innerHTML="<b>Pesanan berhasil dibuat.</b> Membuka Pesanan Saya...";
      setTimeout(()=>location.replace("status.html"),350);

@@ -35,7 +35,7 @@
    const msg=document.querySelector(`.paymsg[data-invoice="${CSS.escape(invoice)}"]`);
    if(!file){if(msg)msg.textContent="Pilih foto bukti transfer terlebih dahulu.";return}
    btn.disabled=true;btn.textContent="Mengirim bukti...";
-   try{const proof=await resize(file);await rpc("sg_submit_payment_v3",{p_invoice:invoice,p_proof_data_url:proof});if(msg)msg.innerHTML="<b>Bukti berhasil dikirim.</b> Menunggu verifikasi.";setTimeout(loadOrders,600)}
+   try{const proof=await resize(file);await rpc("sg_submit_payment_v6",{p_invoice:invoice,p_proof_data_url:proof});if(msg)msg.innerHTML="<b>Bukti berhasil dikirim.</b> Menunggu verifikasi.";setTimeout(loadOrders,600)}
    catch(err){console.error(err);if(msg)msg.innerHTML="<b>Bukti belum berhasil dikirim.</b> Coba lagi.";btn.disabled=false;btn.textContent="Kirim Bukti Pembayaran"}
  }
  function bind(){
