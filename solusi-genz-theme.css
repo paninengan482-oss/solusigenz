@@ -735,3 +735,32 @@ img{max-width:100%}
     max-height:220px!important;
   }
 }
+
+
+/* =========================================================
+   SUPPORT ILLUSTRATION FULL — TANPA TEKS DUPLIKAT
+   ========================================================= */
+.support-full-section{
+  padding:38px 0!important;
+}
+.support-full-illustration{
+  width:100%!important;
+  border-radius:24px!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.support-full-illustration img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  margin:0 auto!important;
+}
+@media(max-width:760px){
+  .support-full-section{padding:22px 0!important}
+  .support-full-illustration{border-radius:16px!important}
+}
