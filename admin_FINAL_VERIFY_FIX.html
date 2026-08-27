@@ -1,0 +1,233 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090c"><title>Solusi Genz — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="solusi-genz-theme.css">
+<style id="admin-order-mobile-final">
+#orders .table-wrap{overflow:visible!important}
+#orders table{width:100%;table-layout:auto}
+#orders .order-invoice,#orders .order-customer,#orders .order-product{display:flex;flex-direction:column;gap:5px}
+#orders td small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
+#orders .order-status{display:inline-flex;align-items:center;padding:8px 10px;border-radius:10px;font-weight:800;font-size:12px;line-height:1.3}
+#orders .order-status.is-waiting{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35)}
+#orders .order-status.is-success{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3)}
+#orders .order-status.is-verified{background:rgba(20,119,255,.12);border:1px solid rgba(20,119,255,.3)}
+#orders .order-status.is-pending{background:rgba(255,255,255,.05);border:1px solid var(--line)}
+#orders .order-actions{display:flex;gap:7px;flex-wrap:wrap}
+#orders .btn-sm{padding:9px 11px;font-size:12px;min-height:38px}
+@media(max-width:760px){
+ #orders .section-head{align-items:stretch}
+ #orders .section-head select{width:100%}
+ #orders table,#orders tbody,#orders tr,#orders td{display:block;width:100%}
+ #orders thead{display:none}
+ #orders tbody{display:grid;gap:12px}
+ #orders tr.order-row{padding:16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
+ #orders tr.order-row td{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;padding:9px 0;border:0!important;white-space:normal!important;min-width:0!important}
+ #orders tr.order-row td::before{content:attr(data-label);color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+ #orders tr.order-row td+td{border-top:1px solid rgba(255,255,255,.06)!important}
+ #orders .order-invoice b,#orders .order-customer b,#orders .order-product b{overflow-wrap:anywhere}
+ #orders .order-actions{width:100%}
+ #orders .order-actions .btn{flex:1 1 120px}
+}
+</style>
+</head><body>
+<div id="pengelolaView" class="app-shell" style="display:grid"><aside class="sidebar"><a href="#dashboard"><img class="sg-logo" src="solusi-genz-v2.svg"></a><nav class="side-nav"><a class="active" href="#dashboard">Performa</a><a href="#orders">Pesanan <span id="newBadge" class="new-badge" style="display:none">0</span></a><a href="#customers">Pelanggan</a><a href="#products">Produk</a><a href="#affiliate">Affiliate</a><a href="#withdrawals">Pencairan <span id="wdBadge" class="new-badge" style="display:none">0</span></a><a href="#settings">Tampilan & Konten</a><a href="shop.html">Lihat Website</a></nav><div style="margin-top:auto"><small id="pengelolaEmail"></small><button id="logoutBtn" class="btn btn-ghost" style="width:100%;margin-top:10px">Keluar</button></div></aside>
+<main class="main"><header class="topbar"><div><h1>Performa Solusi Genz</h1><p>Pantau performa, pesanan, produk, affiliate, pencairan, dan tampilan website.</p></div><button id="refreshBtn" class="btn btn-ghost">Refresh</button></header>
+<section id="dashboard" class="stats"><a class="card stat kpi-link" href="#orders" data-filter=""><small>Total Pesanan</small><h3 id="statOrders">0</h3></a><a class="card stat kpi-link" href="#orders" data-filter="Menunggu Verifikasi"><small>Menunggu Verifikasi</small><h3 id="statVerify">0</h3></a><a class="card stat kpi-link" href="#orders" data-filter="Diproses"><small>Sedang Diproses</small><h3 id="statProcess">0</h3></a><a class="card stat kpi-link" href="#orders" data-filter="PAID"><small>Omzet Pesanan Berhasil</small><h3 id="statRevenue">Rp 0</h3></a></section>
+
+<section id="orders" class="card panel pengelola-section-anchor"><div class="topbar" style="margin:0"><div><h3>Pesanan</h3><div class="sub">Periksa bukti pembayaran lalu lanjutkan proses pesanan.</div></div><select id="filterStatus"><option value="">Semua status</option><option>pending</option><option>Menunggu Verifikasi</option><option>Lunas</option><option>Diproses</option><option>Selesai</option><option>Dibatalkan</option></select></div><div id="ordersMsg" class="notice" style="display:none"></div><div class="table-wrap"><table class="table"><thead><tr><th>Invoice</th><th>Pelanggan</th><th>Produk</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="ordersBody"></tbody></table></div></section>
+
+<section class="card panel order-access-editor pengelola-section-anchor">
+  <h3>Kirim Akses ke Pelanggan</h3>
+  <div class="sub">Setelah pembayaran diverifikasi, pilih invoice lalu ketik akses akun/link/kode dan catatan penting. Pelanggan akan melihatnya langsung di halaman Pesanan.</div>
+  <div class="pengelola-access-box">
+    <div class="field"><label>Invoice</label><select id="accessInvoice"></select></div>
+    <div class="field"><label>Status setelah dikirim</label><input value="Selesai / Berhasil" disabled></div>
+  </div>
+  <div class="field" style="margin-top:12px"><label>Akses Produk</label><textarea id="accessText" rows="4" placeholder="Contoh: Email akun / password / link invite / kode aktivasi"></textarea></div>
+  <div class="field" style="margin-top:12px"><label>Catatan Penting</label><textarea id="accessNote" rows="4" placeholder="Contoh: Jangan ubah email, masa aktif sampai..., hubungi pengelola jika ada kendala."></textarea></div>
+  <button id="saveAccessBtn" class="btn btn-primary" style="margin-top:12px">Kirim / Simpan Akses</button>
+  <div id="accessMsg" class="notice" style="display:none;margin-top:12px"></div>
+</section>
+
+<section id="customers" class="card panel pengelola-section-anchor"><h3>Pelanggan</h3><div class="sub">Daftar pelanggan berdasarkan riwayat pesanan.</div><div class="table-wrap"><table class="table"><thead><tr><th>Nama</th><th>Email</th><th>WhatsApp</th><th>Pesanan</th><th>Total Belanja</th></tr></thead><tbody id="customerBody"></tbody></table></div></section>
+
+<section id="products" class="card panel pengelola-section-anchor"><div class="topbar" style="margin:0"><div><h3>Katalog Produk</h3><div class="sub">Tambah/edit produk, harga, durasi, komisi dan foto produk.</div></div><button id="newProductBtn" class="btn btn-primary">+ Produk Baru</button></div><div id="productMsg" class="notice" style="display:none;margin-top:12px"></div>
+<form id="productForm" class="product-pengelola-form"><input id="productId" type="hidden"><input id="productImageData" type="hidden"><div class="field wide"><label>Nama Produk</label><input id="productName" required></div><div class="field"><label>Kategori</label><input id="productCategory"></div><div class="field"><label>Durasi</label><input id="productDuration"></div><div class="field"><label>Harga Jual</label><input id="productPrice" type="number" min="0" required></div><div class="field"><label>Komisi Affiliate</label><input id="productCommission" type="number" min="0" required></div><div class="field"><label>Status</label><select id="productActive"><option value="true">Aktif</option><option value="false">Nonaktif</option></select></div><div class="field"><label>Urutan</label><input id="productSort" type="number" value="100"></div><div class="field full"><label>Deskripsi</label><textarea id="productDescription" rows="3"></textarea></div>
+<div class="field full"><label>Foto Produk</label><div class="logo-manager"><div class="logo-preview" id="productImagePreview"><span class="muted">Belum ada foto</span></div><div><input id="productImageFile" type="file" accept="image/png,image/jpeg,image/webp"><div class="toolbar" style="margin-top:8px"><button id="removeProductImage" type="button" class="btn btn-ghost">Hapus Foto</button></div></div></div></div>
+<div class="toolbar full"><button class="btn btn-primary" type="submit">Simpan Produk</button><button class="btn btn-ghost" type="button" id="cancelProductBtn">Batal</button></div></form>
+<div class="table-wrap"><table class="table"><thead><tr><th>Foto</th><th>Produk</th><th>Durasi</th><th>Harga</th><th>Komisi</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="productBody"></tbody></table></div></section>
+
+<section id="affiliate" class="card panel pengelola-section-anchor"><h3>Affiliate & Rekrutmen</h3><div class="sub">Affiliate aktif setelah transaksi pertama valid. Komisi mengikuti nilai per produk.</div><div class="table-wrap"><table class="table"><thead><tr><th>Affiliate</th><th>Kode</th><th>Referral</th><th>Transaksi</th><th>Komisi</th><th>Dibayar</th></tr></thead><tbody id="affiliateBody"></tbody></table></div></section>
+<section id="withdrawals" class="card panel pengelola-section-anchor"><div class="topbar" style="margin:0"><div><h3>Permintaan Pencairan</h3><div class="sub">Transfer manual, lalu tandai dibayar atau ditolak.</div></div><button id="refreshWd" class="btn btn-ghost">Refresh</button></div><div id="wdMsg" class="notice" style="display:none;margin-top:12px"></div><div class="table-wrap"><table class="table"><thead><tr><th>Affiliate</th><th>Nominal</th><th>Metode</th><th>Nama</th><th>Nomor</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="wdBody"><tr><td colspan="8">Memuat...</td></tr></tbody></table></div></section>
+
+<section id="settings" class="card panel pengelola-section-anchor"><h3>Tampilan & Media Website</h3><div class="sub">Semua gambar berikut dapat diganti kapan pun dari halaman ini dan langsung dipakai website.</div>
+<div class="logo-manager"><div id="logoPreview" class="logo-preview"><img src="solusi-genz-v2.svg"></div><div><b>Logo Solusi Genz</b><p class="muted">Logo di bagian atas website, login dan dashboard.</p><input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp"><button id="removeLogo" type="button" class="btn btn-ghost" style="margin-top:8px">Pakai Logo Default</button></div></div>
+
+<div class="settings-grid affiliate-settings-edit">
+  <div class="field wide"><label>Judul Affiliate</label><input id="affiliateTitleSetting"></div>
+  <div class="field wide"><label>Penjelasan Affiliate</label><textarea id="affiliateTextSetting" rows="5"></textarea></div>
+  <div class="field"><label>Komisi Produk 1–3 Hari</label><input id="commission13Setting" type="number" min="0"></div>
+  <div class="field"><label>Komisi Produk 1 Minggu</label><input id="commissionWeekSetting" type="number" min="0"></div>
+  <div class="field"><label>Komisi Produk 1 Bulan</label><input id="commissionMonthSetting" type="number" min="0"></div>
+  <div class="field"><label>Komisi Produk 1 Tahun</label><input id="commissionYearSetting" type="number" min="0"></div>
+  <div class="field wide"><label>Judul Cara Order</label><input id="orderTitleSetting"></div>
+</div>
+
+<div class="settings-grid">
+<div class="field wide"><label>Judul Hero</label><input id="heroTitle"></div><div class="field wide"><label>Subjudul Hero</label><textarea id="heroSubtitle" rows="3"></textarea></div>
+<div class="field"><label>WhatsApp Support</label><input id="supportWa"></div><div class="field"><label>Nama Founder</label><input id="founderName"></div>
+<div class="field wide"><label>Judul Tentang Kami</label><input id="aboutTitle"></div><div class="field wide"><label>Isi Tentang Kami</label><textarea id="aboutText" rows="5"></textarea></div>
+</div>
+<div class="settings-grid">
+<div class="field"><label>Gambar Hero / Banner Utama</label><input id="heroMediaFile" type="file" accept="image/png,image/jpeg,image/webp"><div id="heroMediaPreview" class="logo-preview" style="margin-top:8px;width:100%;height:160px"></div><button type="button" class="btn btn-ghost media-remove" data-key="hero_media_data_url">Pakai Default</button></div>
+<div class="field"><label>Ilustrasi Transaksi</label><input id="transactionMediaFile" type="file" accept="image/png,image/jpeg,image/webp"><div id="transactionMediaPreview" class="logo-preview" style="margin-top:8px;width:100%;height:160px"></div><button type="button" class="btn btn-ghost media-remove" data-key="transaction_media_data_url">Pakai Default</button></div>
+<div class="field"><label>Ilustrasi Referral / Affiliate</label><input id="referralMediaFile" type="file" accept="image/png,image/jpeg,image/webp"><div id="referralMediaPreview" class="logo-preview" style="margin-top:8px;width:100%;height:160px"></div><button type="button" class="btn btn-ghost media-remove" data-key="referral_media_data_url">Pakai Default</button></div>
+<div class="field"><label>Ilustrasi Dukungan</label><input id="supportMediaFile" type="file" accept="image/png,image/jpeg,image/webp"><div id="supportMediaPreview" class="logo-preview" style="margin-top:8px;width:100%;height:160px"></div><button type="button" class="btn btn-ghost media-remove" data-key="support_media_data_url">Pakai Default</button></div>
+</div>
+<button id="saveSettingsBtn" class="btn btn-primary" style="margin-top:16px">Simpan Semua Pengaturan</button><span id="settingsMsg" class="muted" style="margin-left:10px"></span></section>
+</main></div>
+<script src="supabase-config.js"></script><script src="store-settings-v14.js"></script><script>
+const OWNER_EMAIL="paninengan482@gmail.com";
+const $=id=>document.getElementById(id);let token=sessionStorage.getItem("sg_admin_token")||"",allOrders=[],allProducts=[],currentLogoData="",mediaData={hero_media_data_url:"",transaction_media_data_url:"",referral_media_data_url:"",support_media_data_url:""};
+const money=n=>"Rp "+Number(n||0).toLocaleString("id-ID"),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function headers(){const h={"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY};if(token)h.Authorization="Bearer "+token;return h}
+function api(path,opts={}){return fetch(window.SG_SUPABASE_URL+path,{...opts,headers:{...headers(),...(opts.headers||{})},cache:"no-store"})}
+async function rpc(name,body={}){const r=await api("/rest/v1/rpc/"+name,{method:"POST",body:JSON.stringify(body)});if(!r.ok)throw Error(await r.text());const t=await r.text();try{return t?JSON.parse(t):null}catch(_){return t}}
+function paidStatus(s){return["Selesai","Berhasil"].includes(s)}
+async function loadOrders(){
+  ordersBody.innerHTML='<tr><td colspan="5">Memuat...</td></tr>';
+  ordersMsg.style.display="none";
+  try{
+    const data=await rpc("sg_admin_orders_v5");
+    allOrders=Array.isArray(data)?data:[];
+    renderOrders();
+    renderCustomers();
+    renderAccessInvoices();
+    updateNewOrders();
+
+    try{
+      const s=await rpc("sg_admin_dashboard_v5");
+      if(s){
+        statOrders.textContent=Number(s.total_orders||0);
+        statVerify.textContent=Number(s.waiting_verification||0);
+        statProcess.textContent=Number(s.processing_orders||0);
+        statRevenue.textContent=money(s.omzet||0);
+      }
+    }catch(_){}
+  }catch(e){
+    console.error("ADMIN ORDER LOAD:",e);
+    allOrders=[];
+    renderOrders();
+    ordersMsg.style.display="block";
+    ordersMsg.textContent="Pesanan belum terbaca. Keluar dari admin, login kembali, lalu tekan Refresh.";
+    ordersBody.innerHTML='<tr><td colspan="5">Belum dapat membaca pesanan.</td></tr>';
+  }
+}
+function renderOrders(){
+ const q="",f=filterStatus.value;
+ const rows=allOrders.filter(o=>(!f||o.status===f)&&(!q||[o.invoice,o.customer_name,o.email,o.product_name,o.whatsapp].join(" ").toLowerCase().includes(q)));
+ statOrders.textContent=allOrders.length;
+ statVerify.textContent=allOrders.filter(o=>o.status==="Menunggu Verifikasi").length;
+ statProcess.textContent=allOrders.filter(o=>o.status==="Diproses").length;
+ statRevenue.textContent=money(allOrders.filter(o=>paidStatus(o.status)).reduce((a,o)=>a+Number(o.price||0),0));
+ if(!rows.length){
+   ordersBody.innerHTML='<tr><td colspan="5"><div class="admin-empty">Belum ada pesanan pada status ini.</div></td></tr>';
+   return;
+ }
+ ordersBody.innerHTML=rows.map(o=>{
+   const status=String(o.status||"pending");
+   const verified=["Lunas","Dibayar","Diproses","Selesai","Berhasil"].includes(status);
+   const completed=["Selesai","Berhasil"].includes(status);
+   const proof=o.payment_proof_data_url||"";
+   const canSend=verified&&!completed;
+   return `<tr class="order-row">
+    <td data-label="Invoice"><div class="order-invoice"><b>${esc(o.invoice)}</b><small>${new Date(o.created_at).toLocaleString("id-ID")}</small></div></td>
+    <td data-label="Pelanggan"><div class="order-customer"><b>${esc(o.customer_name)}</b><small>${esc(o.email)}</small>${o.whatsapp?`<small>${esc(o.whatsapp)}</small>`:""}</div></td>
+    <td data-label="Produk"><div class="order-product"><b>${esc(o.product_name)}</b><small>${money(o.price)}</small></div></td>
+    <td data-label="Status"><span class="order-status ${completed?"is-success":status==="Menunggu Verifikasi"?"is-waiting":verified?"is-verified":"is-pending"}">${esc(completed?"Pesanan Berhasil":status)}</span></td>
+    <td data-label="Aksi"><div class="order-actions">
+      ${proof?`<button class="btn btn-ghost btn-sm" type="button" onclick="window.open('${proof}','_blank')">Lihat Bukti</button>`:""}
+      ${status==="Menunggu Verifikasi"?`<button class="btn btn-primary btn-sm" type="button" onclick="verifyAndPrepare('${esc(o.invoice)}')">Verifikasi</button>`:""}
+      ${canSend?`<button class="btn btn-primary btn-sm" type="button" onclick="prepareAccess('${esc(o.invoice)}')">Kirim Akses</button>`:""}
+      ${completed?`<button class="btn btn-ghost btn-sm" type="button" onclick="prepareAccess('${esc(o.invoice)}')">Lihat Detail</button>`:""}
+    </div></td>
+   </tr>`
+ }).join("");
+}
+async function verifyAndPrepare(invoice){
+ try{
+   await rpc("sg_admin_set_status_v6",{p_invoice:invoice,p_status:"Diproses"});
+   await loadOrders();
+   prepareAccess(invoice);
+ }catch(e){
+   console.error(e);
+   alert("Verifikasi belum berhasil. Coba lagi.");
+ }
+}
+function prepareAccess(invoice){
+ show("orders");
+ setTimeout(()=>{
+   if(accessInvoice){
+     accessInvoice.value=invoice;
+     accessInvoice.dispatchEvent(new Event("change"));
+     accessInvoice.scrollIntoView({behavior:"smooth",block:"center"});
+   }
+ },100);
+}
+function renderCustomers(){const map={};for(const o of allOrders){const k=(o.email||o.whatsapp||o.customer_name||"unknown").toLowerCase();if(!map[k])map[k]={name:o.customer_name,email:o.email,wa:o.whatsapp,count:0,total:0};map[k].count++;map[k].total+=Number(o.price||0)}const rows=Object.values(map);customerBody.innerHTML=rows.length?rows.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.email)}</td><td>${esc(c.wa||"-")}</td><td>${c.count}</td><td>${money(c.total)}</td></tr>`).join(""):'<tr><td colspan="5">Belum ada pelanggan.</td></tr>'}
+function resetProductForm(){productId.value="";productForm.reset();productSort.value=100;productActive.value="true";productImageData.value="";renderProductImage("");productMsg.style.display="none"}
+function renderProductImage(data){productImagePreview.innerHTML=data?`<img src="${data}" style="width:100%;height:100%;object-fit:contain">`:'<span class="muted">Belum ada foto</span>'}
+async function resize(file,max=1000){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{const s=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);res(c.toDataURL("image/webp",.82))};img.onerror=rej;img.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
+async function loadProducts(){try{allProducts=await rpc("sg_admin_catalog_list");productBody.innerHTML=allProducts.length?allProducts.map(p=>`<tr><td>${p.image_data_url?`<img src="${p.image_data_url}" style="width:54px;height:42px;object-fit:cover;border-radius:8px">`:"-"}</td><td><b>${esc(p.name)}</b><br><small>${esc(p.category||"")}</small></td><td>${esc(p.duration||"-")}</td><td>${money(p.price)}</td><td>${money(p.commission_amount)}</td><td><span class="pill">${p.active?"Aktif":"Nonaktif"}</span></td><td><div class="actions"><button class="edit-product" data-id="${p.id}">Edit</button><button class="delete-product danger" data-id="${p.id}">Hapus</button></div></td></tr>`).join(""):'<tr><td colspan="8">Belum ada produk.</td></tr>';document.querySelectorAll(".edit-product").forEach(b=>b.onclick=()=>editProduct(b.dataset.id));document.querySelectorAll(".delete-product").forEach(b=>b.onclick=()=>deleteProduct(b.dataset.id))}catch(e){productBody.innerHTML='<tr><td colspan="8">Katalog belum dapat dimuat.</td></tr>'}}
+function editProduct(id){const p=allProducts.find(x=>String(x.id)===String(id));if(!p)return;productId.value=p.id;productName.value=p.name;productCategory.value=p.category||"";productDuration.value=p.duration||"";productPrice.value=p.price||0;productCommission.value=p.commission_amount||0;productActive.value=String(!!p.active);productSort.value=p.sort_order||100;productDescription.value=p.description||"";productImageData.value=p.image_data_url||"";renderProductImage(productImageData.value);location.hash="#products"}
+async function deleteProduct(id){if(!confirm("Hapus produk ini?"))return;try{await rpc("sg_admin_catalog_delete",{p_id:id});await loadProducts()}catch(e){alert("Gagal menghapus produk.")}}
+productForm.onsubmit=async e=>{e.preventDefault();productMsg.style.display="block";productMsg.textContent="Menyimpan...";try{await rpc("sg_admin_catalog_save_v2",{p_id:productId.value||null,p_name:productName.value.trim(),p_category:productCategory.value.trim(),p_duration:productDuration.value.trim(),p_description:productDescription.value.trim(),p_price:Number(productPrice.value||0),p_commission_amount:Number(productCommission.value||0),p_active:productActive.value==="true",p_sort_order:Number(productSort.value||100),p_image_data_url:productImageData.value||null});productMsg.textContent="Produk berhasil disimpan.";resetProductForm();await loadProducts()}catch(err){productMsg.textContent="Gagal menyimpan produk. Pastikan SQL FINAL sudah dijalankan."}};
+productImageFile.onchange=async()=>{const f=productImageFile.files[0];if(f){productImageData.value=await resize(f,900);renderProductImage(productImageData.value)}};
+removeProductImage.onclick=()=>{productImageData.value="";renderProductImage("")};newProductBtn.onclick=()=>{resetProductForm();productName.focus()};cancelProductBtn.onclick=resetProductForm;
+async function loadAffiliates(){try{const rows=await rpc("sg_admin_affiliate_summary");affiliateBody.innerHTML=rows.length?rows.map(a=>`<tr><td>${esc(a.affiliate_email)}</td><td>${esc(a.referral_code)}</td><td>${a.total_referrals||0}</td><td>${a.total_transactions||0}</td><td>${money(a.total_commission)}</td><td>${money(a.paid_commission)}</td></tr>`).join(""):'<tr><td colspan="6">Belum ada affiliate.</td></tr>'}catch(e){affiliateBody.innerHTML='<tr><td colspan="6">Data affiliate belum tersedia.</td></tr>'}}
+function setLogo(data){currentLogoData=data||"";logoPreview.innerHTML=`<img src="${currentLogoData||"solusi-genz-v2.svg"}">`}
+function setMedia(key,data){mediaData[key]=data||"";const map={hero_media_data_url:"heroMediaPreview",transaction_media_data_url:"transactionMediaPreview",referral_media_data_url:"referralMediaPreview",support_media_data_url:"supportMediaPreview"};const el=$(map[key]);if(el)el.innerHTML=data?`<img src="${data}" style="width:100%;height:100%;object-fit:contain">`:'<span class="muted">Menggunakan ilustrasi default</span>'}
+async function loadSettings(){let s={...window.SG_DEFAULT_SETTINGS};try{const rows=await rpc("sg_admin_get_store_settings"),base=Array.isArray(rows)?rows[0]:rows;if(base)s={...s,...base}}catch(e){}try{const rows=await rpc("sg_public_extra_settings"),x=Array.isArray(rows)?rows[0]:rows;if(x)s={...s,...x}}catch(e){}heroTitle.value=s.hero_title||"";heroSubtitle.value=s.hero_subtitle||"";supportWa.value=s.support_whatsapp||"";aboutTitle.value=s.about_title||"Tentang Solusi Genz";aboutText.value=s.about_text||"";founderName.value=s.founder_name||"Difa Al Azizi";
+affiliateTitleSetting.value=s.affiliate_title||"Affiliate Solusi Genz";
+affiliateTextSetting.value=s.affiliate_text||"";
+commission13Setting.value=Number(s.commission_1_3_days||2000);
+commissionWeekSetting.value=Number(s.commission_1_week||5000);
+commissionMonthSetting.value=Number(s.commission_1_month||10000);
+commissionYearSetting.value=Number(s.commission_1_year||20000);
+orderTitleSetting.value=s.order_title||"Cara Order";setLogo(s.logo_data_url||"");for(const k of Object.keys(mediaData))setMedia(k,s[k]||"")}
+async function saveSettings(){settingsMsg.textContent="Menyimpan...";try{await rpc("sg_admin_save_store_settings",{p_hero_title:heroTitle.value.trim(),p_hero_subtitle:heroSubtitle.value.trim(),p_promo_title:"Solusi Genz",p_promo_discount:"0",p_reward_per_purchase:"0",p_reward_note:"",p_company_profile:aboutText.value.trim(),p_about_title:aboutTitle.value.trim(),p_about_text:aboutText.value.trim(),p_support_whatsapp:supportWa.value.trim(),p_logo_data_url:currentLogoData});await rpc("sg_admin_save_extra_settings_v2",{p_founder_name:founderName.value.trim(),p_affiliate_enabled:true,p_hero_media_data_url:mediaData.hero_media_data_url||null,p_transaction_media_data_url:mediaData.transaction_media_data_url||null,p_referral_media_data_url:mediaData.referral_media_data_url||null,p_support_media_data_url:mediaData.support_media_data_url||null,
+p_affiliate_title:affiliateTitleSetting.value.trim(),
+p_affiliate_text:affiliateTextSetting.value.trim(),
+p_commission_1_3_days:Number(commission13Setting.value||0),
+p_commission_1_week:Number(commissionWeekSetting.value||0),
+p_commission_1_month:Number(commissionMonthSetting.value||0),
+p_commission_1_year:Number(commissionYearSetting.value||0),
+p_order_title:orderTitleSetting.value.trim()});settingsMsg.textContent="Berhasil disimpan dan langsung aktif di website.";settingsMsg.className="ok"}catch(e){settingsMsg.textContent="Gagal menyimpan. Jalankan SQL FINAL terlebih dahulu.";settingsMsg.className="err"}}
+const bindMedia=(input,key)=>$(input).onchange=async()=>{const f=$(input).files[0];if(f)setMedia(key,await resize(f,1200))};bindMedia("heroMediaFile","hero_media_data_url");bindMedia("transactionMediaFile","transaction_media_data_url");bindMedia("referralMediaFile","referral_media_data_url");bindMedia("supportMediaFile","support_media_data_url");document.querySelectorAll(".media-remove").forEach(b=>b.onclick=()=>setMedia(b.dataset.key,""));
+
+function renderAccessInvoices(){
+ if(!window.accessInvoice)return;
+ const current=accessInvoice.value;
+ accessInvoice.innerHTML='<option value="">Pilih invoice</option>'+allOrders.map(o=>`<option value="${esc(o.invoice)}">${esc(o.invoice)} — ${esc(o.customer_name)} — ${esc(o.product_name)}</option>`).join("");
+ if(current)accessInvoice.value=current;
+}
+accessInvoice.onchange=()=>{
+ const o=allOrders.find(x=>x.invoice===accessInvoice.value);
+ accessText.value=o?.access_text||"";
+ accessNote.value=o?.access_note||"";
+};
+saveAccessBtn.onclick=async()=>{
+ if(!accessInvoice.value){accessMsg.style.display="block";accessMsg.textContent="Pilih invoice terlebih dahulu.";return}
+ accessMsg.style.display="block";accessMsg.textContent="Menyimpan akses...";
+ try{
+   await rpc("sg_admin_deliver_access_v6",{p_invoice:accessInvoice.value,p_access_text:accessText.value.trim(),p_access_note:accessNote.value.trim(),p_status:"Selesai"});
+   accessMsg.textContent="Akses berhasil disimpan dan sekarang terlihat oleh pelanggan.";
+   accessMsg.className="notice ok";
+   await loadOrders();
+ }catch(e){accessMsg.textContent="Gagal menyimpan akses. Jalankan SQL FINAL V3 terlebih dahulu.";accessMsg.className="notice err"}
+};
+
+function updateNewOrders(){const seen=JSON.parse(localStorage.getItem("sg_admin_seen_invoices")||"[]"),fresh=allOrders.filter(o=>!seen.includes(o.invoice));newBadge.textContent=fresh.length;newBadge.style.display=fresh.length?"inline-flex":"none";if(location.hash==="#orders"){localStorage.setItem("sg_admin_seen_invoices",JSON.stringify(allOrders.map(o=>o.invoice)));newBadge.style.display="none"}}
+async function loadWithdrawals(){try{const list=await rpc("sg_admin_list_withdrawals"),pending=(list||[]).filter(x=>String(x.status).toLowerCase()==="diproses");wdBadge.textContent=pending.length;wdBadge.style.display=pending.length?"inline-flex":"none";wdBody.innerHTML=(list||[]).length?(list||[]).map(x=>`<tr><td>${esc(x.affiliate_email)}</td><td>${money(x.amount)}</td><td>${esc(x.method)}</td><td>${esc(x.account_name)}</td><td>${esc(x.account_number)}</td><td><span class="pill">${esc(x.status)}</span></td><td>${String(x.status).toLowerCase()==="diproses"?`<div class="wd-actions"><button class="btn btn-primary btn-sm" onclick="finishWd(${x.id},true)">Sudah Dibayar</button><button class="btn btn-ghost btn-sm" onclick="finishWd(${x.id},false)">Tolak</button></div>`:(x.proof_data_url?`<a class="btn btn-ghost btn-sm" target="_blank" href="${esc(x.proof_data_url)}">Bukti</a>`:"-")}</td></tr>`).join(""):'<tr><td colspan="8">Belum ada permintaan pencairan.</td></tr>'}catch(e){wdBody.innerHTML='<tr><td colspan="8">Fitur pencairan belum tersedia.</td></tr>'}}
+async function finishWd(id,paid){const note=prompt(paid?"Catatan transfer (opsional):":"Alasan penolakan:","")||"",proof=paid?(prompt("Link bukti transfer (opsional):","")||""):"";try{await rpc("sg_admin_finish_withdraw",{p_id:id,p_paid:paid,p_note:note,p_proof_data_url:proof});wdMsg.style.display="block";wdMsg.textContent=paid?"Pencairan ditandai dibayar.":"Pencairan ditolak.";await loadWithdrawals();await loadAffiliates()}catch(e){wdMsg.style.display="block";wdMsg.textContent="Gagal memproses pencairan."}}window.finishWd=finishWd;
+async function refreshAll(){await Promise.all([loadOrders(),loadProducts(),loadAffiliates(),loadSettings(),loadWithdrawals()])}
+refreshBtn.onclick=refreshAll;document.querySelectorAll(".kpi-link").forEach(a=>a.onclick=()=>{filterStatus.value=a.dataset.filter||"";renderOrders()});filterStatus.onchange=renderOrders;if(!token||sessionStorage.getItem("sg_admin_email")?.toLowerCase()!==OWNER_EMAIL.toLowerCase()){location.replace("index.html#pengelola-login")}else{refreshAll()}
+sgLoadSettings();
+</script></body></html>
