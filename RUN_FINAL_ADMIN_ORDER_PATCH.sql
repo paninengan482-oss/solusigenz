@@ -254,3 +254,84 @@ grant execute on function public.sg_admin_sales_summary_v4() to authenticated;
 notify pgrst,'reload schema';
 
 commit;
+
+
+-- =========================================================
+-- FINAL CHECKOUT FIX — ORDER CREATION
+-- =========================================================
+begin;
+
+drop function if exists public.sg_create_order_v4(text,text,bigint,text,text,text);
+
+create function public.sg_create_order_v4(
+  p_invoice text,
+  p_product_name text,
+  p_price bigint,
+  p_customer_name text,
+  p_whatsapp text,
+  p_payment_method text
+)
+returns text
+language plpgsql
+security definer
+set search_path=public
+as $$
+declare
+  v_email text := lower(coalesce(auth.jwt()->>'email',''));
+  v_invoice text := upper(trim(coalesce(p_invoice,'')));
+begin
+  if v_email='' then
+    raise exception 'Harus login';
+  end if;
+
+  if v_invoice='' then
+    raise exception 'Invoice tidak valid';
+  end if;
+
+  if nullif(trim(coalesce(p_product_name,'')),'') is null then
+    raise exception 'Produk tidak valid';
+  end if;
+
+  if coalesce(p_price,0)<=0 then
+    raise exception 'Harga tidak valid';
+  end if;
+
+  if nullif(trim(coalesce(p_customer_name,'')),'') is null then
+    raise exception 'Nama wajib';
+  end if;
+
+  if nullif(trim(coalesce(p_whatsapp,'')),'') is null then
+    raise exception 'WhatsApp wajib';
+  end if;
+
+  insert into public.sg_orders(
+    invoice,
+    product_name,
+    price,
+    customer_name,
+    email,
+    whatsapp,
+    payment_method,
+    status
+  )
+  values(
+    v_invoice,
+    trim(p_product_name),
+    p_price,
+    trim(p_customer_name),
+    v_email,
+    trim(p_whatsapp),
+    coalesce(nullif(trim(p_payment_method),''),'Transfer Bank Mandiri'),
+    'pending'
+  );
+
+  return v_invoice;
+end;
+$$;
+
+revoke all on function public.sg_create_order_v4(text,text,bigint,text,text,text) from public;
+grant execute on function public.sg_create_order_v4(text,text,bigint,text,text,text) to authenticated;
+
+notify pgrst,'reload schema';
+
+commit;

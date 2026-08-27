@@ -1,22 +1,22 @@
-SOLUSI GENZ — FINAL LAUNCH PATCH
+SOLUSI GENZ — FINAL BUGFIX LAUNCH
 
-PAKET INI FINAL UNTUK ALUR PESANAN:
-1. Pelanggan membuat pesanan.
-2. Pesanan tampil otomatis di "Pesanan Saya".
-3. Pelanggan upload bukti transfer.
-4. Status otomatis "Menunggu Verifikasi".
-5. Admin melihat pesanan + bukti transfer.
-6. Admin mengirim akses produk.
-7. Status otomatis "Selesai / Pesanan Berhasil".
-8. Akses langsung tampil di halaman pelanggan.
-9. Omzet admin bertambah hanya setelah pesanan berhasil.
-10. Tidak perlu Cek Invoice lagi.
+BUG PEMESANAN SUDAH DIPERBAIKI:
+- JavaScript checkout yang rusak dibersihkan total.
+- Fungsi membuat pesanan dibuat ulang: sg_create_order_v4.
+- Email pesanan otomatis memakai email akun login.
+- Affiliate dibuat opsional sehingga error affiliate tidak lagi menggagalkan order.
+- Setelah klik Buat Pesanan, pesanan masuk database dan langsung membuka Pesanan Saya.
+- Upload bukti transfer -> Menunggu Verifikasi.
+- Admin melihat bukti -> kirim akses -> otomatis Selesai/Berhasil.
+- Akses muncul otomatis di pelanggan.
+- Omzet hanya bertambah dari pesanan berhasil.
 
-CARA PASANG:
-A. Upload/commit SEMUA file ZIP ini ke repository Solusi Genz.
-B. Tunggu Vercel selesai deploy.
-C. Buka Supabase > SQL Editor > New Query.
-D. Buka RUN_FINAL_ADMIN_ORDER_PATCH.sql, copy semua, paste, lalu Run.
-E. Jika Success, buka website admin dan klik Refresh.
+PASANG FINAL:
+1. Upload/commit seluruh isi ZIP ini ke GitHub, timpa file lama.
+2. Tunggu Vercel selesai deploy.
+3. Supabase > SQL Editor > buka RUN_FINAL_ADMIN_ORDER_PATCH.sql.
+4. Copy SEMUA isi file SQL lalu Run.
+5. Pastikan Success.
+6. Buka website baru/refresh lalu tes 1 pesanan.
 
-Tidak perlu menjalankan SQL lama lagi.
+Jangan jalankan SQL lama lagi.
