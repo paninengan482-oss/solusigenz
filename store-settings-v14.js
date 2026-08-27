@@ -8,7 +8,7 @@ window.SG_DEFAULT_SETTINGS={
  about_text:"Solusi Genz membantu pelanggan mendapatkan produk digital melalui proses yang praktis dan terstruktur.",
  support_whatsapp:"",logo_data_url:"",affiliate_rate:"10",
  founder_name:"Difa Al Azizi",sourcing_name:"Difa Al Azizi",
- hero_media_data_url:"",transaction_media_data_url:"",referral_media_data_url:"",support_media_data_url:"",
+ hero_media_data_url:"assets/hero-banner.png",transaction_media_data_url:"assets/order-banner.png",referral_media_data_url:"assets/affiliate-banner.png",support_media_data_url:"assets/customer-banner.png",
  affiliate_title:"Affiliate Solusi Genz",
  affiliate_text:"Dapatkan komisi dengan cara share kode undangan kamu ke teman terdekat, lalu ajak mereka membeli produk digital Solusi Genz. Komisi juga akan terus kamu dapatkan ketika teman yang kamu undang melakukan repeat order.",
  commission_1_3_days:"2000",
