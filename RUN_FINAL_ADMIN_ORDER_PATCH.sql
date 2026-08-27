@@ -335,3 +335,93 @@ grant execute on function public.sg_create_order_v4(text,text,bigint,text,text,t
 notify pgrst,'reload schema';
 
 commit;
+
+
+-- =========================================================
+-- FINAL ADMIN READ FIX V5
+-- Return JSON directly to avoid table/RPC shape mismatch.
+-- =========================================================
+begin;
+
+drop function if exists public.sg_admin_orders_v5();
+
+create function public.sg_admin_orders_v5()
+returns jsonb
+language plpgsql
+security definer
+set search_path=public
+as $$
+declare
+  v_email text := lower(coalesce(auth.jwt()->>'email',''));
+  v_data jsonb;
+begin
+  if v_email <> 'paninengan482@gmail.com' then
+    raise exception 'Akses admin ditolak';
+  end if;
+
+  select coalesce(
+    jsonb_agg(
+      jsonb_build_object(
+        'invoice',o.invoice,
+        'customer_name',o.customer_name,
+        'email',o.email,
+        'whatsapp',o.whatsapp,
+        'product_name',o.product_name,
+        'price',o.price,
+        'payment_method',o.payment_method,
+        'status',o.status,
+        'created_at',o.created_at,
+        'payment_proof_data_url',o.payment_proof_data_url,
+        'access_text',o.access_text,
+        'access_note',o.access_note,
+        'access_delivered_at',o.access_delivered_at
+      )
+      order by o.created_at desc
+    ),
+    '[]'::jsonb
+  )
+  into v_data
+  from public.sg_orders o;
+
+  return v_data;
+end;
+$$;
+
+revoke all on function public.sg_admin_orders_v5() from public;
+grant execute on function public.sg_admin_orders_v5() to authenticated;
+
+drop function if exists public.sg_admin_dashboard_v5();
+
+create function public.sg_admin_dashboard_v5()
+returns jsonb
+language plpgsql
+security definer
+set search_path=public
+as $$
+declare
+  v_email text := lower(coalesce(auth.jwt()->>'email',''));
+  v_result jsonb;
+begin
+  if v_email <> 'paninengan482@gmail.com' then
+    raise exception 'Akses admin ditolak';
+  end if;
+
+  select jsonb_build_object(
+    'total_orders',count(*),
+    'waiting_verification',count(*) filter (where lower(coalesce(status,''))='menunggu verifikasi'),
+    'processing_orders',count(*) filter (where lower(coalesce(status,''))='diproses'),
+    'completed_orders',count(*) filter (where lower(coalesce(status,'')) in ('selesai','berhasil')),
+    'omzet',coalesce(sum(price) filter (where lower(coalesce(status,'')) in ('selesai','berhasil')),0)
+  )
+  into v_result
+  from public.sg_orders;
+
+  return v_result;
+end;
+$$;
+
+revoke all on function public.sg_admin_dashboard_v5() from public;
+grant execute on function public.sg_admin_dashboard_v5() to authenticated;
+
+notify pgrst,'reload schema';
+commit;
