@@ -802,3 +802,39 @@ img{max-width:100%}
     border-radius:16px!important;
   }
 }
+
+
+/* =========================================================
+   TRUE FULL ILLUSTRATION LANDING — FINAL
+   ========================================================= */
+.visual-only-section{padding:30px 0!important}
+.landing-full-illustration{
+  width:100%!important;
+  display:block!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:24px!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.landing-full-illustration img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  margin:0!important;
+}
+.sg-hero-card{
+  padding:0!important;
+  overflow:hidden!important;
+}
+.sg-hero-card .landing-full-illustration{border-radius:inherit!important}
+@media(max-width:760px){
+ .visual-only-section{padding:18px 0!important}
+ .landing-full-illustration{border-radius:16px!important}
+}

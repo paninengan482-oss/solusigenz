@@ -5,21 +5,7 @@
 <section class="sg-landing">
   <div class="container">
     <div class="sg-hero-card">
-      <div class="sg-hero-inner sg-hero-v4">
-        <div class="sg-hero-copy-wrap">
-          <div class="sg-kicker">SOLUSI DIGITAL UNTUK GENERASI SEKARANG</div>
-          <h1 id="landingHero">Langganan Digital Lebih Hemat di Solusi Genz!</h1>
-          <div class="sg-hero-subtitle" id="landingSub">Layanan Produk Digital Hemat & Praktis</div>
-          <p class="sg-hero-copy" id="landingNote">Harga terbaik • Proses ringkas • Aman & terpercaya</p>
-          <div class="sg-hero-actions">
-            <a class="btn btn-primary" href="#produk">Lihat Produk</a>
-            <a class="btn btn-ghost" href="#affiliate-info">Pelajari Affiliate</a>
-          </div>
-        </div>
-        <div class="hero-wide-media">
-          <img id="heroBanner" data-sg-media="hero_media_data_url" src="assets/illustration-transaction.svg" alt="Banner Solusi Genz">
-        </div>
-      </div>
+      <div class="landing-full-illustration"><img id="heroBanner" data-sg-media="hero_media_data_url" src="assets/illustration-transaction.svg" alt="Banner Solusi Genz"></div>
     </div>
   </div>
 </section>
@@ -38,45 +24,9 @@
   </div>
 </section>
 
-<section class="visual-story" id="cara-order">
-  <div class="container">
-    <span class="badge">CARA ORDER</span>
-    <h2 id="orderTitle">Cara Order</h2>
-    <p class="lead">Alurnya dibuat sederhana agar mudah dipahami dari HP maupun komputer.</p>
-    <div class="mini-flow">
-      <div class="flow-step"><span>01</span><b>Pilih Produk</b><p>Pilih produk digital dan durasi yang kamu butuhkan.</p></div>
-      <div class="flow-step"><span>02</span><b>Buat Pesanan</b><p>Isi data lalu lanjutkan ke halaman pembayaran.</p></div>
-      <div class="flow-step"><span>03</span><b>Kirim Bukti</b><p>Upload bukti transfer untuk diverifikasi Solusi Genz.</p></div>
-      <div class="flow-step"><span>04</span><b>Terima Akses</b><p>Akses produk dan catatan penting muncul di halaman pesanan kamu.</p></div>
-    </div>
-    <div class="full-illustration-card"><img data-sg-media="transaction_media_data_url" src="assets/illustration-transaction.svg" alt="Ilustrasi cara order Solusi Genz"></div>
-  </div>
-</section>
+<section class="visual-story visual-only-section" id="cara-order"><div class="container"><div class="landing-full-illustration"><img data-sg-media="transaction_media_data_url" src="assets/illustration-transaction.svg" alt="Ilustrasi cara order Solusi Genz"></div></div></section>
 
-<section class="section dark affiliate-explain" id="affiliate-info">
-  <div class="container">
-    <span class="badge badge-dark">AFFILIATE SOLUSI GENZ</span>
-    <h2 id="affiliateTitle">Affiliate Solusi Genz</h2>
-    <p class="lead light-lead" id="affiliateText">Dapatkan komisi dengan cara share kode undangan kamu ke teman terdekat, lalu ajak mereka membeli produk digital Solusi Genz. Komisi juga akan terus kamu dapatkan ketika teman yang kamu undang melakukan repeat order.</p>
-    <div class="affiliate-visual card">
-      <img data-sg-media="referral_media_data_url" src="assets/illustration-referral.svg" alt="Ilustrasi Affiliate Solusi Genz">
-      <div>
-        <small class="sg-kicker">CARA DAPAT KOMISI</small>
-        <h3>Share kode undangan → teman beli → kamu dapat komisi.</h3>
-        <p>Komisi berasal dari transaksi pembelian produk digital. Jika teman yang kamu undang melakukan repeat order, komisi tetap tercatat sesuai produk yang dibeli.</p>
-        <div class="tiny-steps"><span>Share kode</span><span>Teman membeli</span><span>Pembayaran valid</span><span>Komisi masuk</span></div>
-      </div>
-    </div>
-    <div class="commission-grid">
-      <div><small>DURASI PRODUK</small><b>1–3 hari</b><strong id="comm13">Rp 2.000</strong></div>
-      <div><small>DURASI PRODUK</small><b>1 minggu</b><strong id="commWeek">Rp 5.000</strong></div>
-      <div><small>DURASI PRODUK</small><b>1 bulan</b><strong id="commMonth">Rp 10.000</strong></div>
-      <div><small>DURASI PRODUK</small><b>1 tahun</b><strong id="commYear">Rp 20.000</strong></div>
-    </div>
-    <div class="affiliate-flow"><span>Share Kode</span><i>→</i><span>Teman Membeli</span><i>→</i><span>Pembayaran Diverifikasi</span><i>→</i><span>Komisi Masuk</span><i>→</i><span>Tarik Saldo</span></div>
-    <div style="margin-top:22px"><a class="btn btn-primary" href="auth.html?mode=register">Mulai Affiliate</a></div>
-  </div>
-</section>
+<section class="section dark affiliate-explain visual-only-section" id="affiliate-info"><div class="container"><div class="landing-full-illustration"><img data-sg-media="referral_media_data_url" src="assets/illustration-referral.svg" alt="Ilustrasi Affiliate Solusi Genz"></div><div class="sg-hero-actions" style="margin-top:18px"><a class="btn btn-primary" href="auth.html?mode=register">Mulai Affiliate</a></div></div></section>
 
 <section class="visual-story support-full-section">
   <div class="container">
@@ -106,15 +56,15 @@
 const rupiah=n=>"Rp "+Number(n||0).toLocaleString("id-ID");
 document.addEventListener("sg-settings-ready",e=>{
  const s=e.detail;
- landingHero.textContent=s.hero_title||"";
- landingSub.textContent=s.hero_subtitle||"";
- landingNote.textContent=s.hero_note||"";
+ if(landingHero)landingHero.textContent=s.hero_title||"";
+ if(landingSub)landingSub.textContent=s.hero_subtitle||"";
+ if(landingNote)landingNote.textContent=s.hero_note||"";
  aboutTitle.textContent=s.about_title||"";
  aboutText.textContent=s.about_text||"";
  founderName.textContent=s.founder_name||"";
- affiliateTitle.textContent=s.affiliate_title||"Affiliate Solusi Genz";
- affiliateText.textContent=s.affiliate_text||"";
- orderTitle.textContent=s.order_title||"Cara Order";
+ if(affiliateTitle)affiliateTitle.textContent=s.affiliate_title||"Affiliate Solusi Genz";
+ if(affiliateText)affiliateText.textContent=s.affiliate_text||"";
+ if(orderTitle)orderTitle.textContent=s.order_title||"Cara Order";
  comm13.textContent=rupiah(s.commission_1_3_days||2000);
  commWeek.textContent=rupiah(s.commission_1_week||5000);
  commMonth.textContent=rupiah(s.commission_1_month||10000);
