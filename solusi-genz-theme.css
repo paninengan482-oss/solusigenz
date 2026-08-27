@@ -641,3 +641,52 @@ img{max-width:100%}
 
 /* FINAL LAUNCH MOBILE + INTERACTION FIX */
 button,input,select,textarea,a{touch-action:manipulation}.product{background:linear-gradient(180deg,#161c27,#0f131b)!important;border:1px solid rgba(255,255,255,.11)!important}.product-visual{min-height:170px;background:linear-gradient(135deg,#1b2433,#10151e)!important}.product-body{background:transparent!important}.product-bottom b{font-size:18px;color:#fff!important}.product .btn-primary{min-width:76px}.media-remove{margin-top:8px}.logo-preview img{max-width:100%;max-height:100%;object-fit:contain}.pengelola-section-anchor{scroll-margin-top:20px}@media(max-width:760px){.sidebar{display:block!important;background:#0b0d12!important;border-bottom:1px solid var(--sg-line)!important;position:sticky!important;top:0!important;z-index:60!important}.side-nav{display:flex!important}.main{padding-top:16px!important}.topbar{margin-bottom:14px!important}.stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.stat h3{font-size:22px!important}.panel{overflow:hidden}.table-wrap{width:100%;overflow-x:auto!important}.product-admin-form{display:grid!important;grid-template-columns:1fr!important}.product-admin-form .full{grid-column:1!important}.logo-manager{display:grid!important;grid-template-columns:1fr!important}.logo-preview{width:100%!important;height:180px!important}.shop-grid{grid-template-columns:1fr!important}.affiliate-card{margin-top:16px}.products{grid-template-columns:1fr!important}.product-visual{height:190px!important}.actions button{min-height:38px}.topbar .btn{width:auto!important}.visual-card{min-height:auto!important}}@media(max-width:440px){.stats{grid-template-columns:1fr!important}.side-nav a{font-size:12px!important;padding:9px 10px!important}.main{padding-left:10px!important;padding-right:10px!important}.topbar h1{font-size:23px!important}.panel h3{font-size:18px!important}.btn{font-size:13px!important}.product-bottom{align-items:center!important}}
+/* === V5.1 MEDIA LAYOUT ONLY — full-width, efficient image placement === */
+.order-visual-card,.support-live-card{
+  display:block!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+.order-visual-card .visual-copy,.support-live-card .visual-copy{
+  max-width:none!important;
+  padding:26px 26px 18px!important;
+}
+.order-visual-card .visual-art,.support-live-card .visual-art{
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:16/9!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  display:block!important;
+}
+.order-visual-card .visual-art img,.support-live-card .visual-art img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  display:block!important;
+  filter:none!important;
+}
+.affiliate-visual{
+  display:block!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+.affiliate-visual>img{
+  display:block!important;
+  width:100%!important;
+  max-height:none!important;
+  aspect-ratio:16/9!important;
+  object-fit:cover!important;
+  margin:0!important;
+}
+.affiliate-visual>div{
+  padding:24px 26px 26px!important;
+}
+@media(max-width:760px){
+  .order-visual-card,.support-live-card,.affiliate-visual{border-radius:22px!important}
+  .order-visual-card .visual-copy,.support-live-card .visual-copy{padding:22px 20px 16px!important}
+  .order-visual-card .visual-art,.support-live-card .visual-art{height:auto!important;aspect-ratio:16/9!important}
+  .affiliate-visual>img{aspect-ratio:16/9!important}
+  .affiliate-visual>div{padding:20px!important}
+}
