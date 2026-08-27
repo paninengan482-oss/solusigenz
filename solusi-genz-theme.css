@@ -638,3 +638,100 @@ img{max-width:100%}
   .commission-grid{grid-template-columns:1fr!important}
   .side-nav{grid-template-columns:1fr 1fr!important}
 }
+
+
+/* =========================================================
+   FINAL PHOTO DISPLAY RESTORE
+   Foto tidak dipaksa satu ukuran/crop yang sama.
+   Fungsi website tidak diubah.
+   ========================================================= */
+
+/* Banner utama tetap lebar dan proporsional */
+.hero-wide-media{
+  aspect-ratio:16/7!important;
+  height:auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+.hero-wide-media img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+/* Foto katalog punya frame sendiri, tidak ikut ukuran banner/ilustrasi */
+.product-visual.catalog-visual{
+  width:100%!important;
+  aspect-ratio:4/3!important;
+  height:auto!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  padding:10px!important;
+}
+.product-visual.catalog-visual img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  border-radius:12px!important;
+}
+
+/* Ilustrasi informasi tetap utuh, tidak terpotong */
+.visual-art{
+  min-height:220px!important;
+  height:auto!important;
+}
+.visual-art img{
+  width:100%!important;
+  height:auto!important;
+  max-height:310px!important;
+  object-fit:contain!important;
+  object-position:center!important;
+}
+
+/* Affiliate punya ukuran sendiri */
+.affiliate-visual img{
+  width:100%!important;
+  height:auto!important;
+  max-height:270px!important;
+  object-fit:contain!important;
+}
+
+/* Preview admin juga tidak mencrop foto produk */
+#products .logo-preview img,
+#productImagePreview img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+}
+
+/* Logo tetap proporsional */
+.logo-preview img{
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+}
+
+@media(max-width:760px){
+  .hero-wide-media{
+    aspect-ratio:16/8!important;
+  }
+  .product-visual.catalog-visual{
+    aspect-ratio:4/3!important;
+    padding:8px!important;
+  }
+  .visual-art{
+    min-height:170px!important;
+  }
+  .visual-art img{
+    max-height:240px!important;
+  }
+  .affiliate-visual img{
+    max-height:220px!important;
+  }
+}
