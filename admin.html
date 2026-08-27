@@ -121,7 +121,7 @@ async function loadOrders(){
   }
 }
 function renderOrders(){
- const q=(orderSearch?.value||"").toLowerCase(),f=orderFilter.value;
+ const q="",f=filterStatus.value;
  const rows=allOrders.filter(o=>(!f||o.status===f)&&(!q||[o.invoice,o.customer_name,o.email,o.product_name,o.whatsapp].join(" ").toLowerCase().includes(q)));
  statOrders.textContent=allOrders.length;
  statVerify.textContent=allOrders.filter(o=>o.status==="Menunggu Verifikasi").length;
