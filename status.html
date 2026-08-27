@@ -1,4 +1,7 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090c"><title>Status Pesanan — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="solusi-genz-theme.css"></head><body>
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090c"><title>Status Pesanan — Solusi Genz</title><link rel="stylesheet" href="revamp.css"><link rel="stylesheet" href="solusi-genz-theme.css"><style>
+.sg-order-state{text-align:center;padding:26px 18px}.sg-order-state .state-icon{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font-size:30px;font-weight:900;background:#315df6;color:#fff}.sg-order-state h2{margin:14px 0 8px}.sg-order-state p{margin:7px 0}.sg-order-state .muted{opacity:.72}
+@media(max-width:640px){.form-card h1{font-size:34px}.form-card .field>div{display:grid!important}.form-card #checkBtn{width:100%}}
+</style></head><body>
 <script>if(!localStorage.getItem("sg_user_token"))location.replace("auth.html")</script>
 <nav class="nav"><div class="container navin"><a class="brand" href="index.html"><span data-sg-logo><img src="solusi-genz-v2.svg"></span></a><a class="btn btn-ghost" href="shop.html">Kembali</a></div></nav>
 <div class="container form-wrap"><div class="card form-card"><div class="badge" style="margin-bottom:12px">PESANAN & AKSES</div><h1>Status Pesanan</h1><div class="field"><label>Nomor invoice</label><div style="display:flex;gap:10px;flex-wrap:wrap"><input id="invoice" placeholder="Contoh: SGZ-A1B2C3D4E5F6"><button id="checkBtn" class="btn btn-primary" type="button">Cek Pesanan</button></div></div><div id="result"></div></div></div>
@@ -6,7 +9,7 @@
 <script>
 (function(){
  const BANK_NAME="Bank Mandiri",ACCOUNT_NAME="DEDE",ACCOUNT_NO="1330035817931";
- const $=id=>document.getElementById(id),qs=new URLSearchParams(location.search),idq=qs.get("id"),isNew=qs.get("new")==="1",token=localStorage.getItem("sg_user_token")||"",myEmail=(localStorage.getItem("sg_user_email")||"").trim().toLowerCase();
+ const $=id=>document.getElementById(id),qs=new URLSearchParams(location.search),idq=qs.get("id")||localStorage.getItem("sg_last_invoice")||"",isNew=qs.get("new")==="1",token=localStorage.getItem("sg_user_token")||"",myEmail=(localStorage.getItem("sg_user_email")||"").trim().toLowerCase();
  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  async function resize(file,max=1200){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/webp",.80))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
  async function rpc(name,body={}){const r=await fetch(window.SG_SUPABASE_URL+"/rest/v1/rpc/"+name,{method:"POST",headers:{"Content-Type":"application/json","apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+token},body:JSON.stringify(body),cache:"no-store"});if(!r.ok)throw Error(await r.text());const t=await r.text();try{return t?JSON.parse(t):null}catch(_){return t}}
@@ -23,7 +26,7 @@
    const b=$("paidBtn"),m=$("paymsg"),f=$("proofFile")?.files?.[0];if(!b)return;
    if(!f){m.textContent="Pilih foto bukti transfer terlebih dahulu.";return}
    b.disabled=true;b.textContent="Mengirim bukti...";
-   try{const proof=await resize(f);await rpc("sg_submit_payment_v6",{p_invoice:invoice,p_proof_data_url:proof});m.innerHTML="<b>Bukti berhasil dikirim.</b> Menunggu verifikasi Owner.";setTimeout(check,700)}
+   try{const proof=await resize(f);await rpc("sg_submit_payment_v6",{p_invoice:invoice,p_proof_data_url:proof});localStorage.setItem("sg_last_invoice",invoice);document.getElementById("result").innerHTML=`<div class="success sg-order-state"><div class="state-icon">✓</div><span class="badge">PESANAN TERKIRIM</span><h2>Menunggu Verifikasi</h2><p>Bukti pembayaran berhasil dikirim ke Solusi Genz.</p><p class="muted">Admin akan memeriksa pembayaran. Setelah akses dikirim, status otomatis berubah menjadi <b>Pesanan Berhasil</b>.</p><p><b>${esc(invoice)}</b></p></div>`}
    catch(err){console.error(err);m.innerHTML="<b>Bukti belum berhasil dikirim.</b> Coba lagi.";b.disabled=false;b.textContent="Kirim Bukti Pembayaran"}
  }
  async function check(){
@@ -33,7 +36,14 @@
      const rows=await rpc("sg_check_order_v6",{p_invoice:id});const o=Array.isArray(rows)?rows[0]:rows;
      if(!o){r.innerHTML='<div class="note">Pesanan tidak ditemukan atau bukan milik akun ini.</div>';return}
      const created=o.created_at?new Date(o.created_at).toLocaleString("id-ID"):"-";
-     r.innerHTML=`<div class="success">${isNew?'<b>✓ PESANAN BERHASIL DIBUAT</b>':'<b>Pesanan ditemukan</b>'}<h2 style="margin:10px 0">${esc(o.status)}</h2><p style="font-size:18px"><b>${esc(o.invoice)}</b></p><p>${esc(o.product_name)} — Rp ${Number(o.price||0).toLocaleString("id-ID")}</p><p>Nama: ${esc(o.customer_name)}<br>Metode: ${esc(o.payment_method)}<br>Dibuat: ${esc(created)}</p>${o.payment_proof_data_url?`<p><b>Bukti pembayaran sudah terkirim.</b></p>`:""}</div>${paymentBox(o)}${deliveryBox(o)}`;
+     const done=String(o.status||"").toLowerCase()==="selesai"||!!o.access_text;
+     const waiting=String(o.status||"").toLowerCase().includes("verifikasi");
+     const stateHtml=done
+       ? `<div class="success sg-order-state"><div class="state-icon">✓</div><span class="badge">PESANAN BERHASIL</span><h2>Pesanan Sudah Berhasil</h2><p>Akses produk kamu sudah dikirim.</p><p><b>${esc(o.invoice)}</b></p></div>`
+       : waiting
+       ? `<div class="success sg-order-state"><div class="state-icon">✓</div><span class="badge">PESANAN TERKIRIM</span><h2>Menunggu Verifikasi</h2><p>Bukti pembayaran sudah diterima dan sedang diperiksa admin.</p><p><b>${esc(o.invoice)}</b></p></div>`
+       : `<div class="success sg-order-state">${isNew?'<span class="badge">PESANAN DIBUAT</span>':'<span class="badge">STATUS PESANAN</span>'}<h2>${esc(o.status)}</h2><p><b>${esc(o.invoice)}</b></p><p>${esc(o.product_name)} — Rp ${Number(o.price||0).toLocaleString("id-ID")}</p></div>`;
+     r.innerHTML=stateHtml+paymentBox(o)+deliveryBox(o);
      const pf=$("proofFile");if(pf)pf.onchange=async()=>{const f=pf.files[0];if(f){const d=await resize(f,700);$("proofPreview").innerHTML=`<img class="payment-proof" src="${d}">`}};
      const pb=$("paidBtn");if(pb)pb.onclick=()=>submitPaid(o.invoice);
    }catch(err){console.error(err);r.innerHTML='<div class="note"><b>Status belum bisa dibaca.</b> Silakan coba lagi.</div>'}

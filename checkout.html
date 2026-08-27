@@ -5,6 +5,7 @@ async function rpc(name,body){const r=await fetch(window.SG_SUPABASE_URL+"/rest/
 async function getAccountRef(){let ref=(localStorage.getItem("sg_ref_code")||"").trim().toUpperCase();if(ref||!token)return ref;try{const r=await fetch(window.SG_SUPABASE_URL+"/auth/v1/user",{headers:{"apikey":window.SG_SUPABASE_KEY,"Authorization":"Bearer "+token}});if(r.ok){const u=await r.json();ref=(u?.user_metadata?.referral_code||"").trim().toUpperCase();if(ref)localStorage.setItem("sg_ref_code",ref)}}catch(_){}return ref}
 orderBtnEl.onclick=async()=>{if(!nameEl.value.trim()||!waEl.value.trim()||!emailEl.value.trim()){msgEl.textContent="Lengkapi nama, WhatsApp dan email.";return}if(!price||price<0){msgEl.textContent="Harga produk tidak valid.";return}const invoice=inv();orderBtnEl.disabled=true;msgEl.textContent="Menyimpan pesanan...";try{const buyerEmail=emailEl.value.trim();const ref=await getAccountRef();if(ref){try{await rpc("sg_affiliate_attach_referral_v6",{p_referral_code:ref})}catch(_){}}try{await rpc("sg_affiliate_sync_self_v6",{})}catch(_){}
 await rpc("sg_create_order_v6",{p_invoice:invoice,p_product_name:product,p_price:price,p_customer_name:nameEl.value.trim(),p_whatsapp:waEl.value.trim(),p_payment_method:methodEl.value});
+localStorage.setItem("sg_last_invoice",invoice);
 location.replace("status.html?id="+encodeURIComponent(invoice)+"&new=1")}catch(e){console.error(e);msgEl.textContent="Pesanan belum berhasil disimpan. Silakan refresh lalu coba lagi.";orderBtnEl.disabled=false}};
 })();
 </script></body></html>
