@@ -1,0 +1,33 @@
+SOLUSI GENZ — UKURAN GAMBAR ILUSTRASI V5.2
+
+Gunakan rasio LANDSCAPE 16:9 untuk semua ilustrasi agar mudah didesain dan konsisten.
+
+1. Banner Utama / Hero
+   Rekomendasi: 1920 x 1080 px
+   Rasio: 16:9
+   Format: JPG / PNG / WebP
+   Maksimal disarankan: 2 MB
+
+2. Ilustrasi Cara Order / Alur Pesanan
+   Rekomendasi: 1920 x 1080 px
+   Rasio: 16:9
+   Format: JPG / PNG / WebP
+   Maksimal disarankan: 2 MB
+
+3. Ilustrasi Affiliate
+   Rekomendasi: 1920 x 1080 px
+   Rasio: 16:9
+   Format: JPG / PNG / WebP
+   Maksimal disarankan: 2 MB
+
+4. Ilustrasi Dukungan / Pelanggan
+   Rekomendasi: 1920 x 1080 px
+   Rasio: 16:9
+   Format: JPG / PNG / WebP
+   Maksimal disarankan: 2 MB
+
+Catatan desain:
+- Sisakan safe area sekitar 80–120 px dari tiap tepi untuk teks/logo penting.
+- Hindari teks terlalu kecil karena gambar akan diperkecil di HP.
+- Website V5.2 memakai object-fit: contain supaya gambar tidak terpotong.
+- Perubahan V5.2 hanya layout/spacing ilustrasi; fungsi website dan database tidak diubah.

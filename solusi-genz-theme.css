@@ -690,3 +690,61 @@ button,input,select,textarea,a{touch-action:manipulation}.product{background:lin
   .affiliate-visual>img{aspect-ratio:16/9!important}
   .affiliate-visual>div{padding:20px!important}
 }
+
+
+/* === V5.2 ILLUSTRATION SPACING ONLY ===
+   Tujuan: ilustrasi menjadi elemen penuh tanpa duplikasi teks di dalam card.
+   Tidak mengubah fungsi, database, checkout, admin, atau affiliate logic. */
+.media-only-card{
+  padding:0!important;
+  overflow:hidden!important;
+  background:#0f131b!important;
+}
+.order-visual-card.media-only-card .visual-art,
+.support-live-card.media-only-card .visual-art{
+  width:100%!important;
+  aspect-ratio:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  background:#0b0f17!important;
+}
+.order-visual-card.media-only-card .visual-art img,
+.support-live-card.media-only-card .visual-art img,
+.affiliate-visual.media-only-card>img{
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  display:block!important;
+  margin:0!important;
+  border-radius:inherit!important;
+}
+.affiliate-visual.media-only-card{
+  display:block!important;
+  padding:0!important;
+}
+/* Hero: tampilkan seluruh artwork, jangan crop bagian bawah pada HP */
+.hero-wide-media{
+  aspect-ratio:auto!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:hidden!important;
+  background:#0b0f17!important;
+}
+.hero-wide-media img{
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:auto!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  display:block!important;
+}
+@media(max-width:760px){
+  .hero-wide-media{aspect-ratio:auto!important;min-height:0!important}
+  .hero-wide-media img{height:auto!important;object-fit:contain!important}
+  .media-only-card{border-radius:20px!important}
+}
