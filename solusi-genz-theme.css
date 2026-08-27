@@ -764,3 +764,41 @@ img{max-width:100%}
   .support-full-section{padding:22px 0!important}
   .support-full-illustration{border-radius:16px!important}
 }
+
+
+/* =========================================================
+   ALL LANDING ILLUSTRATIONS — FULL IMAGE ONLY
+   Semua penjelasan visual berada di dalam ilustrasi.
+   ========================================================= */
+.full-illustration-card,
+.affiliate-full-illustration{
+  display:block!important;
+  width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  border-radius:24px!important;
+}
+.full-illustration-card img,
+.affiliate-full-illustration img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  margin:0!important;
+}
+.visual-story .container{
+  display:block!important;
+}
+@media(max-width:760px){
+  .full-illustration-card,
+  .affiliate-full-illustration{
+    border-radius:16px!important;
+  }
+}
