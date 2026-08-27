@@ -46,7 +46,7 @@ function show(s,ok=false){msgEl.textContent=s;msgEl.style.display="block";msgEl.
 async function attachAffiliate(em,userId,token,code=""){
  const effective=(code||ref||"").trim().toUpperCase();if(!effective||!token)return false;
  try{
-  const r=await req("/rest/v1/rpc/sg_affiliate_attach_referral_v6",{p_referral_code:effective},token);
+  const r=await req("/rest/v1/rpc/sg_affiliate_attach_referral",{p_buyer_email:em,p_buyer_user_id:userId||null,p_referral_code:effective},token);
   if(r.ok){localStorage.setItem("sg_ref_attached",effective);return true}
  }catch(_){}
  return false
@@ -91,7 +91,7 @@ submitEl.onclick=async()=>{
      localStorage.setItem("sg_user_id",d.user?.id||"");
      const metaRef=(d.user?.user_metadata?.referral_code||ref||"").trim().toUpperCase();if(metaRef)localStorage.setItem("sg_ref_code",metaRef);
      await attachAffiliate(em,d.user?.id||"",d.access_token,metaRef);
-     try{await req("/rest/v1/rpc/sg_affiliate_sync_self_v6",{},d.access_token)}catch(_){}
+     try{await req("/rest/v1/rpc/sg_affiliate_sync_self",{p_email:em},d.access_token)}catch(_){}
      location.replace("shop.html");
    }else show("Akun dibuat. Jika verifikasi email aktif, buka email verifikasi lalu masuk.");
  }catch(e){show(reg?"Pendaftaran belum berhasil. Email mungkin sudah terdaftar.":"Email/ID atau password salah.")}
